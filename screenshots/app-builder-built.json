@@ -1,0 +1,41 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Inkunzi",
+      "hasCanvas": false,
+      "bodyTextLen": 768,
+      "bodyTextHash": "56937c5f4c9a64bafb5eb638286dedcbf4e8fb9cbb78e7ff16e3d669c2635791",
+      "bodyTextPrefix": "INKUNZI Inkunzi TURN 1 Bronze · Day 1 · 15,000 / pop Staffed tab",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Inkunzi",
+      "hasCanvas": false,
+      "bodyTextLen": 76,
+      "bodyTextHash": "7ef6e8b793692658f60e68141958338b2b95ca4087874bfaa726a2476c6cb475",
+      "bodyTextPrefix": "TURN 1 Staff Friday Saturday INKUNZI Unrolling the painting… Que",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": true,
+  "baselineReasons": [
+    "desktop: body text changed (860 -> 768 chars, hash mismatch)",
+    "mobile: body text replaced (similar length, page start changed)"
+  ]
+}

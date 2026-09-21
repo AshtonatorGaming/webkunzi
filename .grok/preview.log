@@ -1,0 +1,3072 @@
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:12:04 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:13:47 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+ReferenceError: window is not defined
+    at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+    ... 7 lines matching cause stack trace ...
+    at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33 {
+  cause: ReferenceError: window is not defined
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:752:19
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:648:66
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:649:4
+      at file:///workspace/.vercel/output/functions/__server.func/_runtime.mjs:9:49
+      at file:///workspace/.vercel/output/functions/__server.func/_libs/@react-leaflet/core+%5B...%5D.mjs:7480:26
+      at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+      at async grokPwaMiddleware (file:///workspace/.vercel/output/functions/__server.func/index.mjs:439:17)
+      at async file:///workspace/node_modules/nitro/dist/vite.mjs:153:33,
+  status: 500,
+  statusText: undefined,
+  headers: undefined,
+  data: undefined,
+  body: undefined,
+  unhandled: true
+}
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:14:21 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:15:51 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:27:09 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/
+
+> preview
+> node scripts/with-app-env.mjs vite preview
+
+
+ ╭────────── [Build Info] ─────────────╮
+ │                                     │
+ │  - Build Directory: .vercel/output  │
+ │  - Date: 9/21/2026, 9:30:14 AM      │
+ │  - Nitro Version: 3.0.260610-beta   │
+ │  - Nitro Preset: vercel             │
+ │                                     │
+ ╰─────────────────────────────────────╯
+
+  ➜  Local:   http://127.0.0.1:8081/

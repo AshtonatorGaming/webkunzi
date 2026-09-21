@@ -1,0 +1,25 @@
+/** Channel numbers kept as pack data. Do not invent Grove raids or factory trees. */
+
+export const RULINGS = {
+  infamyGates: [50, 75, 100, 125, 150],
+  infamyPerStab: 3,
+  migratePops: 10,
+  convertDc: 15,
+  convertDcSwing: 3,
+  microDc: 8,
+  expansionFailStab: -10,
+  expansionRetryBonus: 5,
+  transports: 250,
+  nomadArmyMult: 0.5,
+  nomadResourceMult: 0.5,
+  fortsBase: 1,
+  fortsPerPops: 10,
+  fortMaintain: 10_000,
+  maxArmies: 3,
+  minTroopStrength: 500,
+  siegeTurns: { light: 2, medium: 3, heavy: 4 },
+  warSupportBase: 55,
+  goldBase: 3000,
+  luxuryBase: 6000,
+  newNationTreasury: 60_000,
+} as const;

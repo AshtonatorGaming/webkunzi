@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Inkunzi",
+      "hasCanvas": false,
+      "bodyTextLen": 860,
+      "bodyTextHash": "a370400c9aa559de69f6346c8ffe057f44b53524bf095f3fc367ba67f429fb5e",
+      "bodyTextPrefix": "INKUNZI Inkunzi TURN 1 Bronze · Day 1 · 15,000 / pop Staffed tab",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Inkunzi",
+      "hasCanvas": false,
+      "bodyTextLen": 81,
+      "bodyTextHash": "7b6cb6312ea28e189bf6c2956c4f2fa5400adb95e19b457bb6c0a6b1afe8584c",
+      "bodyTextPrefix": "TURN 1 Staff Friday Saturday ALL POL CUL REL RES MIL 40 28 16 + ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
