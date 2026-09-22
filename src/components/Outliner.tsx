@@ -91,7 +91,7 @@ export default function Outliner({
                     className="mt-1 block pl-7 text-left text-[11px] text-fg/80"
                     onClick={() => onSelectArmy(a.id)}
                   >
-                    Banner · {Math.round(a.strength)}
+                    Banner · {a.units?.[0]?.name ?? "host"} · {Math.round(a.strength)}
                   </button>
                 ))}
                 {rulers.map((ch) => (

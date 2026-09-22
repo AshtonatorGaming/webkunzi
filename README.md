@@ -9,4 +9,4 @@ npm install
 npm run dev
 ```
 
-Staff live is god mode for mapping tests. March a banner into an enemy zone of control to declare. Friday resolves Shock / Early / Late. Saturday runs food, tax, and manpower. Export a world JSON to keep a season.
+Staff live is god mode for mapping tests. March approaches a banner; Attack is an explicit order. ZOC blocks pathing *through* a disk, not the kiss. Friday resolves Shock / Early / Late as named unit lines and an I2/I3 grade. Saturday runs food, tax, and manpower. Export a world JSON to keep a season.

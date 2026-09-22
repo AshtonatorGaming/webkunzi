@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WorldMapLoader from "@/components/WorldMapLoader";
 import ActionPanel from "@/components/ActionPanel";
 import WindowFrame from "@/components/WindowFrame";
@@ -10,6 +10,7 @@ import CharacterWindow from "@/components/CharacterWindow";
 import SessionWindow from "@/components/SessionWindow";
 import TopBar from "@/components/TopBar";
 import Outliner from "@/components/Outliner";
+import BattleReport from "@/components/BattleReport";
 import { usePops } from "@/engine/usePops";
 import { useNations } from "@/engine/useNations";
 import { useNodes } from "@/engine/useNodes";
@@ -23,11 +24,22 @@ import { advanceDay, advanceTurn } from "@/engine/sessionStore";
 import { buildSnapshot, downloadSnapshot, parseSnapshot } from "@/engine/worldIO";
 import { makeWindow, type GameWindow } from "@/engine/windows";
 import { turnMarchRange } from "@/engine/movement";
-import { applyBattleToArmies, firstContact } from "@/engine/battle";
+import {
+  armiesInContact,
+  continueReel,
+  eligibleJoiners,
+  firstContact,
+  isGhost,
+  mergeReelArmies,
+  startReel,
+  strikeGhost,
+  suggestTerrain,
+} from "@/engine/battle";
 import { makeAction } from "@/engine/actionStore";
-import { findOpenWar, makeWar } from "@/engine/warStore";
+import { findOpenWar, makeWar, overrideGrade, warHasArmy } from "@/engine/warStore";
+import { resetWarTurnFlags } from "@/engine/armyStore";
 import { checkStat } from "@/engine/roll";
-import type { Session, TerrainId } from "@/engine/types";
+import type { Army, BattleGrade, MarchMode, Session, StaffRemain, TableMode, TerrainId, War } from "@/engine/types";
 import { cn } from "@/lib/cn";
 
 type Dock = "none" | "actions" | "nations";
@@ -44,10 +56,14 @@ export default function TableApp() {
   const [windows, setWindows] = useState<GameWindow[]>([]);
   const [selectedArmyId, setSelectedArmyId] = useState<string | null>(null);
   const [marchingArmyId, setMarchingArmyId] = useState<string | null>(null);
+  const [marchMode, setMarchMode] = useState<MarchMode>("march");
   const [selectedNationId, setSelectedNationId] = useState<string | null>("vestoria");
   const [log, setLog] = useState("Staffed table. Friday is war. Saturday is numbers.");
   const [staffLive, setStaffLive] = useState(true);
+  const [tableMode, setTableMode] = useState<TableMode>("peace");
   const [dock, setDock] = useState<Dock>("none");
+  const [reportWarId, setReportWarId] = useState<string | null>(null);
+  const seededNation = useRef(false);
 
   const ready =
     session &&
@@ -58,6 +74,19 @@ export default function TableApp() {
     actionsState.ready &&
     charactersState.ready &&
     warsState.ready;
+
+  useEffect(() => {
+    if (!ready || seededNation.current) return;
+    const n =
+      nationsState.nations.find((x) => x.id === "vestoria") ??
+      nationsState.nations.find((x) => x.id !== "unclaimed");
+    if (!n) return;
+    seededNation.current = true;
+    setWindows((cur) => {
+      if (cur.some((w) => w.kind === "nation")) return cur;
+      return [makeWindow("nation", n.name, n.id, 16, 64), ...cur];
+    });
+  }, [ready, nationsState.nations]);
 
   if (!ready || !session || !setSession) {
     return (
@@ -76,6 +105,7 @@ export default function TableApp() {
   const { actions, add: addAction, setStatus, setActions } = actionsState;
   const selectedNation = nations.find((n) => n.id === selectedNationId) ?? null;
   const openWars = warsState.wars.filter((w) => w.status === "declared").length;
+  const friday = tableMode === "friday";
 
   function exportWorld() {
     downloadSnapshot(
@@ -113,11 +143,13 @@ export default function TableApp() {
       const slot =
         kind === "war"
           ? { x: 420, y: 72 }
-          : kind === "queue"
-            ? { x: 92, y: 72 }
-            : kind === "session"
-              ? { x: 360, y: 72 }
-              : { x: 460, y: 96 + cur.length * 16 };
+          : kind === "nation"
+            ? { x: 16, y: 64 }
+            : kind === "queue"
+              ? { x: 92, y: 72 }
+              : kind === "session"
+                ? { x: 360, y: 72 }
+                : { x: 460, y: 96 + cur.length * 16 };
       const vw = typeof window === "undefined" ? 1280 : window.innerWidth;
       const vh = typeof window === "undefined" ? 800 : window.innerHeight;
       const width = Math.min(22 * 16, vw - 24);
@@ -129,6 +161,8 @@ export default function TableApp() {
 
   function openNation(id: string) {
     setSelectedNationId(id);
+    const n = nations.find((x) => x.id === id);
+    pushWindow("nation", n?.name ?? id, id);
   }
 
   function openCharacter(id: string) {
@@ -137,58 +171,283 @@ export default function TableApp() {
     pushWindow("character", c.name, c.id);
   }
 
-  function applyMarch(armyId: string, x: number, y: number) {
-    const moved = armiesState.armies.map((a) => (a.id === armyId ? { ...a, x, y } : a));
-    const army = moved.find((a) => a.id === armyId);
+  function applyMarch(armyId: string, x: number, y: number, mode: MarchMode = marchMode) {
+    const army = armiesState.armies.find((a) => a.id === armyId);
+    if (!army) return;
+    const open = warsState.wars.find((w) => w.status === "declared" && warHasArmy(w, armyId));
+    if (open) {
+      if (mode === "skirmish") {
+        if (army.moveUsed && army.actionUsed) {
+          setLog("No Move or Action left this war-turn.");
+          setMarchingArmyId(null);
+          return;
+        }
+      } else if (army.moveUsed) {
+        if (army.actionUsed) {
+          setLog("Double march would spend Action — already spent.");
+          setMarchingArmyId(null);
+          return;
+        }
+      }
+    }
+    const posture =
+      mode === "force" ? "forceMarched" : mode === "skirmish" ? "skirmish" : army.posture === "entrenched" ? "plain" : army.posture;
+    const moveUsed = true;
+    const actionUsed =
+      mode === "skirmish" || (Boolean(open) && Boolean(army.moveUsed)) ? true : army.actionUsed;
+    const moved = armiesState.armies.map((a) =>
+      a.id === armyId ? { ...a, x, y, posture, moveUsed, actionUsed } : a,
+    );
     armiesState.setArmies(moved);
     setMarchingArmyId(null);
-    setSelectedArmyId(null);
-    if (!army) {
+    const next = moved.find((a) => a.id === armyId);
+    if (!next) {
       setLog("Marched.");
       return;
     }
-    const foe = firstContact(army, moved);
+    const foe = firstContact(next, moved);
     if (!foe) {
-      setLog("Peacetime march. No contact.");
+      setLog(mode === "skirmish" ? "Skirmish march. No banner in the disk." : "Peacetime march. Approach is not a battle.");
       return;
     }
-    if (findOpenWar(warsState.wars, army.id, foe.id)) {
-      setLog("Contact — war already declared.");
-      return;
-    }
-    const atkName = nations.find((n) => n.id === army.ownerId)?.name ?? army.ownerId;
     const defName = nations.find((n) => n.id === foe.ownerId)?.name ?? foe.ownerId;
-    const war = makeWar(army, foe, "open", { attacker: atkName, defender: defName });
-    warsState.add(war);
-    addAction({
-      ...makeAction("war", war.title, "Field battle pending Friday", {
-        armyId,
-        nationId: army.ownerId,
-        defenderArmyId: foe.id,
-        warId: war.id,
-        lane: 3,
-        auto: false,
-        status: "accepted",
-      }),
-    });
-    setLog(`Contact — ${war.title}. Friday to resolve.`);
-    pushWindow("war", "Friday wars", "board");
+    setLog(`Approached ${defName}. Contact is not a battle — Attack is an order.`);
   }
 
   function moveArmy(id: string, x: number, y: number) {
     const army = armiesState.armies.find((a) => a.id === id);
     const title = `March ${nations.find((n) => n.id === army?.ownerId)?.name ?? "army"}`;
-    const detail = `to ${Math.round(x)}, ${Math.round(y)}`;
+    const detail = `to ${Math.round(x)}, ${Math.round(y)} (${marchMode})`;
     if (staffLive) {
       addAction({
-        ...makeAction("march", title, detail, { armyId: id, toX: x, toY: y, auto: true, status: "accepted" }),
+        ...makeAction("march", title, detail, {
+          armyId: id,
+          toX: x,
+          toY: y,
+          auto: true,
+          status: "accepted",
+          marchMode,
+        }),
       });
-      applyMarch(id, x, y);
+      applyMarch(id, x, y, marchMode);
       return;
     }
-    addAction(makeAction("march", title, detail, { armyId: id, toX: x, toY: y }));
+    addAction(makeAction("march", title, detail, { armyId: id, toX: x, toY: y, marchMode }));
     setLog("March queued for staff. Permission is not the outcome.");
     setMarchingArmyId(null);
+  }
+
+  function declareWar(attackerId: string, defenderId: string) {
+    const atk = armiesState.armies.find((a) => a.id === attackerId);
+    const def = armiesState.armies.find((a) => a.id === defenderId);
+    if (!atk || !def) return;
+    if (atk.id === def.id || atk.ownerId === def.ownerId) {
+      setLog("Declare needs two enemy banners.");
+      return;
+    }
+    if (findOpenWar(warsState.wars, atk.id, def.id)) {
+      setLog("That war is already declared.");
+      return;
+    }
+    const atkJoin = [atk, ...eligibleJoiners(atk, [def], armiesState.armies)];
+    const defJoin = [def, ...eligibleJoiners(def, [atk], armiesState.armies)];
+    const atkName = nations.find((n) => n.id === atk.ownerId)?.name ?? atk.ownerId;
+    const defName = nations.find((n) => n.id === def.ownerId)?.name ?? def.ownerId;
+    const war = makeWar(atk, def, suggestTerrain(def, pops), { attacker: atkName, defender: defName }, {
+      attackerIds: atkJoin.map((a) => a.id),
+      defenderIds: defJoin.map((a) => a.id),
+    });
+    warsState.add({ ...war, pendingAttack: false });
+    setLog(`Declared — ${war.title}. Attack is still an order.`);
+    setTableMode("friday");
+  }
+
+  function startFridayReel(warId: string, armyList: Army[] = armiesState.armies, warOverride?: War) {
+    const war = warOverride ?? warsState.wars.find((w) => w.id === warId);
+    if (!war || war.status !== "declared") return;
+    if (war.reel) {
+      setReportWarId(warId);
+      return;
+    }
+    const atkIds = war.attackerArmyIds.length ? war.attackerArmyIds : [war.attackerArmyId];
+    const defIds = war.defenderArmyIds.length ? war.defenderArmyIds : [war.defenderArmyId];
+    const attackers = atkIds
+      .map((id) => armyList.find((a) => a.id === id))
+      .filter((a): a is Army => a != null)
+      .filter((a) => !isGhost(a));
+    const defenders = defIds
+      .map((id) => armyList.find((a) => a.id === id))
+      .filter((a): a is Army => a != null);
+    if (!attackers.length || !defenders.length) {
+      setLog("Banners missing. Cannot open the reel.");
+      return;
+    }
+    if (defenders.every(isGhost)) {
+      const lead = attackers[0]!;
+      armiesState.setArmies(strikeGhost(armyList, lead.id, defenders[0]!.id));
+      warsState.update(warId, { status: "resolved", pendingAttack: false, reel: undefined });
+      setLog("Ghost struck. The pin is gone.");
+      return;
+    }
+    const reel = startReel({ attackers, defenders, terrain: war.terrain, pops });
+    const merged = mergeReelArmies(armyList, reel).map((a) =>
+      a.id === attackers[0]!.id ? { ...a, actionUsed: true } : a,
+    );
+    armiesState.setArmies(merged);
+    if (warsState.wars.some((w) => w.id === war.id)) {
+      warsState.update(war.id, { reel, report: reel.report, pendingAttack: false });
+    } else {
+      warsState.add({ ...war, reel, report: reel.report, pendingAttack: false });
+    }
+    setReportWarId(warId);
+    setTableMode("friday");
+    setLog(`Shock. ${reel.report.summary}`);
+  }
+
+  function continueBattle(staff?: StaffRemain[]) {
+    const war = warsState.wars.find((w) => w.id === reportWarId);
+    if (!war?.reel) {
+      setReportWarId(null);
+      return;
+    }
+    const next = continueReel(war.reel, armiesState.armies, pops, staff);
+    armiesState.setArmies(next.armies);
+    if (!next.reel) {
+      warsState.update(war.id, {
+        status: "resolved",
+        pendingAttack: false,
+        reel: undefined,
+        report: next.report,
+      });
+      setReportWarId(null);
+      const leftover =
+        next.report.winner === "attacker"
+          ? war.reel.leftoverAtk
+          : next.report.winner === "defender"
+            ? war.reel.leftoverDef
+            : false;
+      setLog(
+        leftover
+          ? `${next.report.summary} Occupy. Move still in hand — Attack is spent.`
+          : `${next.report.summary} Occupy.`,
+      );
+      return;
+    }
+    warsState.update(war.id, { reel: next.reel, report: next.reel.report });
+    setLog(next.reel.report.summary);
+  }
+
+  function issueAttack(attackerId: string, defenderId: string, fromQueue = false) {
+    const atk = armiesState.armies.find((a) => a.id === attackerId);
+    const def = armiesState.armies.find((a) => a.id === defenderId);
+    if (!atk || !def) return;
+    if (atk.id === def.id || atk.ownerId === def.ownerId) {
+      setLog("Attack needs an enemy banner.");
+      return;
+    }
+    if (!staffLive && !armiesInContact(atk, def)) {
+      setLog("Out of engage radius. Approach the banner first.");
+      return;
+    }
+    if (isGhost(atk)) {
+      setLog("A ghost cannot Attack.");
+      return;
+    }
+    if (isGhost(def)) {
+      const next = strikeGhost(armiesState.armies, atk.id, def.id);
+      if (next.length === armiesState.armies.length) {
+        setLog("That pin is not a ghost, or it has reinforced.");
+        return;
+      }
+      armiesState.setArmies(next);
+      const open = findOpenWar(warsState.wars, atk.id, def.id);
+      if (open) warsState.update(open.id, { status: "resolved", pendingAttack: false, reel: undefined });
+      setLog("Ghost struck. The pin is gone.");
+      return;
+    }
+    if (atk.actionUsed) {
+      setLog("Action already spent this war-turn.");
+      return;
+    }
+    const atkJoin = [atk, ...eligibleJoiners(atk, [def], armiesState.armies)];
+    const defJoin = [def, ...eligibleJoiners(def, [atk], armiesState.armies)];
+    const atkName = nations.find((n) => n.id === atk.ownerId)?.name ?? atk.ownerId;
+    const defName = nations.find((n) => n.id === def.ownerId)?.name ?? def.ownerId;
+    const terrain = suggestTerrain(def, pops);
+    const existing = findOpenWar(warsState.wars, atk.id, def.id);
+    const commit = () => {
+      const spent = armiesState.armies.map((a) => (a.id === atk.id ? { ...a, actionUsed: true } : a));
+      armiesState.setArmies(spent);
+      if (existing) {
+        const patched = {
+          ...existing,
+          pendingAttack: true,
+          attackerArmyId: atk.id,
+          defenderArmyId: def.id,
+          attackerArmyIds: atkJoin.map((a) => a.id),
+          defenderArmyIds: defJoin.map((a) => a.id),
+        };
+        warsState.update(existing.id, patched);
+        if (friday) {
+          startFridayReel(existing.id, spent, patched);
+          return;
+        }
+        setLog(`Attack ordered — ${existing.title}. Friday to resolve.`);
+      } else {
+        const war = makeWar(atk, def, terrain, { attacker: atkName, defender: defName }, {
+          attackerIds: atkJoin.map((a) => a.id),
+          defenderIds: defJoin.map((a) => a.id),
+        });
+        if (friday) {
+          startFridayReel(war.id, spent, war);
+          return;
+        }
+        warsState.add(war);
+        setLog(`Attack ordered — ${war.title}. Friday to resolve.`);
+      }
+    };
+    if (fromQueue || staffLive) {
+      if (!fromQueue) {
+        addAction({
+          ...makeAction("attack", `${atkName} attacks ${defName}`, "Explicit order. Not a kiss.", {
+            armyId: atk.id,
+            defenderArmyId: def.id,
+            auto: false,
+            status: "accepted",
+            lane: 3,
+          }),
+        });
+      }
+      commit();
+      return;
+    }
+    addAction(
+      makeAction("attack", `${atkName} attacks ${defName}`, "Lane 3 — staff gate.", {
+        armyId: atk.id,
+        defenderArmyId: def.id,
+      }),
+    );
+    setLog("Attack queued for staff.");
+  }
+
+  function entrenchArmy(id: string) {
+    const army = armiesState.armies.find((a) => a.id === id);
+    if (!army) return;
+    if (army.actionUsed) {
+      setLog("Action already spent.");
+      return;
+    }
+    const doIt = () => armiesState.update(id, { posture: "entrenched", actionUsed: true });
+    if (staffLive) {
+      addAction({
+        ...makeAction("entrench", "Entrench", "Tortoise sit.", { armyId: id, auto: true, status: "accepted" }),
+      });
+      doIt();
+      setLog("Entrenched. Sit bonus if attacked.");
+      return;
+    }
+    addAction(makeAction("entrench", "Entrench", "Tortoise sit.", { armyId: id }));
+    setLog("Entrench queued for staff.");
   }
 
   function acceptAction(id: string) {
@@ -200,7 +459,13 @@ export default function TableApp() {
       action.toX != null &&
       action.toY != null
     ) {
-      applyMarch(action.armyId, action.toX, action.toY);
+      applyMarch(action.armyId, action.toX, action.toY, action.marchMode ?? "march");
+    }
+    if (action.kind === "attack" && action.armyId && action.defenderArmyId) {
+      issueAttack(action.armyId, action.defenderArmyId, true);
+    }
+    if (action.kind === "entrench" && action.armyId) {
+      armiesState.update(action.armyId, { posture: "entrenched", actionUsed: true });
     }
     if (action.kind === "convert" && action.needsRoll) {
       const ruler = charactersState.characters.find((c) => c.nationId === action.nationId);
@@ -214,25 +479,78 @@ export default function TableApp() {
     setStatus(id, "accepted");
   }
 
-  function resolveWar(id: string) {
+  function markInconclusive(id: string) {
     const war = warsState.wars.find((w) => w.id === id);
     if (!war || war.status !== "declared") return;
-    const result = applyBattleToArmies(
-      armiesState.armies,
-      pops,
-      war.attackerArmyId,
-      war.defenderArmyId,
-      war.terrain,
-    );
-    armiesState.setArmies(result.armies);
-    warsState.update(id, { status: "resolved", report: result.report ?? undefined });
-    setLog(result.report?.summary ?? "Field resolved.");
+    const atk = armiesState.armies.find((a) => a.id === war.attackerArmyId);
+    const def = armiesState.armies.find((a) => a.id === war.defenderArmyId);
+    warsState.update(id, {
+      status: "resolved",
+      pendingAttack: false,
+      reel: undefined,
+      report: {
+        attackerIds: war.attackerArmyIds,
+        defenderIds: war.defenderArmyIds,
+        terrain: war.terrain,
+        phases: [],
+        winner: "inconclusive",
+        wipe: false,
+        grade: "inconclusive",
+        decisivePhase: null,
+        attackerTags: [],
+        defenderTags: [],
+        units: [],
+        casualtiesByNation: [],
+        attackerLoss: 0,
+        defenderLoss: 0,
+        summary: "Inconclusive. Neither side takes the field.",
+        x: atk && def ? (atk.x + def.x) / 2 : atk?.x ?? def?.x,
+        y: atk && def ? (atk.y + def.y) / 2 : atk?.y ?? def?.y,
+      },
+    });
+    setReportWarId(id);
+    setLog("Inconclusive. The week writes itself down as a stare.");
+  }
+
+  function overrideWarGrade(id: string, grade: BattleGrade) {
+    const war = warsState.wars.find((w) => w.id === id);
+    if (!war) return;
+    warsState.update(id, overrideGrade(war, grade));
+  }
+
+  function toggleWarArmy(warId: string, armyId: string, side: "attacker" | "defender") {
+    const war = warsState.wars.find((w) => w.id === warId);
+    if (!war) return;
+    const key = side === "attacker" ? "attackerArmyIds" : "defenderArmyIds";
+    const lead = side === "attacker" ? war.attackerArmyId : war.defenderArmyId;
+    if (armyId === lead) return;
+    const cur = war[key];
+    const next = cur.includes(armyId) ? cur.filter((x) => x !== armyId) : [...cur, armyId];
+    warsState.update(warId, { [key]: next.length ? next : [lead] });
+  }
+
+  function advanceWarTurn(id: string) {
+    const war = warsState.wars.find((w) => w.id === id);
+    if (!war || war.status !== "declared") return;
+    const ids = new Set([...war.attackerArmyIds, ...war.defenderArmyIds]);
+    armiesState.setArmies(resetWarTurnFlags(armiesState.armies, ids));
+    warsState.update(id, { warTurn: war.warTurn + 1, pendingAttack: false });
+    setLog(`War-turn ${Math.min(war.warTurn + 1, war.warTurns)}/${war.warTurns}. Move and Action refresh.`);
   }
 
   function runTick() {
     const result = tickAll(nations, pops, nodesState.nodes, armiesState.armies, current);
     setNations(result.nations);
     setSession(advanceTurn(current));
+    const fighting = new Set(
+      warsState.wars.filter((w) => w.status === "declared").flatMap((w) => [...w.attackerArmyIds, ...w.defenderArmyIds]),
+    );
+    armiesState.setArmies(resetWarTurnFlags(armiesState.armies, fighting));
+    warsState.setWars(
+      warsState.wars.map((w) =>
+        w.status === "declared" ? { ...w, warTurn: w.warTurn + 1, pendingAttack: false } : w,
+      ),
+    );
     setLog(result.log.join(" "));
   }
 
@@ -250,28 +568,50 @@ export default function TableApp() {
     setDock("actions");
   }
 
+  function renderWarBoard() {
+    return (
+      <WarWindow
+        wars={warsState.wars}
+        armies={armiesState.armies}
+        nations={nations}
+        compact={friday}
+        onTerrain={(id, terrain: TerrainId) => warsState.update(id, { terrain })}
+        onDeclare={declareWar}
+        onResolve={startFridayReel}
+        onInconclusive={markInconclusive}
+        onToggleArmy={toggleWarArmy}
+        onAdvanceTurn={advanceWarTurn}
+        onOpenReport={setReportWarId}
+      />
+    );
+  }
+
   return (
-    <main className="relative flex h-dvh flex-col overflow-hidden bg-bg text-fg">
+    <main className={cn("relative flex h-dvh flex-col overflow-hidden bg-bg text-fg", friday && "ink-friday")}>
       <TopBar
         session={current}
         staffLive={staffLive}
+        tableMode={tableMode}
         openWars={openWars}
         log={log}
         onStaffLive={setStaffLive}
+        onTableMode={setTableMode}
         onDay={() => setSession(advanceDay(current))}
         onSaturday={runTick}
-        onFriday={() => pushWindow("war", "Friday wars", "board")}
         onClock={() => pushWindow("session", "Session clock", "session")}
         onQueue={() => pushWindow("queue", "Action queue", "queue")}
         onExport={exportWorld}
         onImport={(file) => void importWorld(file)}
       />
       <div className="relative min-h-0 flex-1">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 isolate z-0">
           <WorldMapLoader
             mapWidth={current.mapWidth}
             mapHeight={current.mapHeight}
-            marchRange={turnMarchRange(current)}
+            marchRange={
+              turnMarchRange(current) *
+              (marchMode === "skirmish" ? 2 : marchMode === "force" ? 1.5 : 1)
+            }
             selectedArmyId={selectedArmyId}
             marchingArmyId={marchingArmyId}
             staffLive={staffLive}
@@ -287,10 +627,13 @@ export default function TableApp() {
                 if (army) setSelectedNationId(army.ownerId);
               }
             }}
-            onStartMarch={(id) => {
+            onStartMarch={(id, mode) => {
               setSelectedArmyId(id);
               setMarchingArmyId(id);
+              setMarchMode(mode);
             }}
+            onAttack={issueAttack}
+            onEntrench={entrenchArmy}
             onMoveArmy={moveArmy}
             onPlacePop={(y, x) => popsState.place(x, y)}
             onPlaceNode={(y, x) => nodesState.place(x, y)}
@@ -303,21 +646,6 @@ export default function TableApp() {
             onRemoveArmy={armiesState.remove}
           />
         </div>
-        {selectedNation && (
-          <div className="ink-panel ink-scroll absolute top-3 left-3 z-chrome hidden max-h-[calc(100%-4.5rem)] w-80 overflow-y-auto md:block">
-            <NationWindow
-              nation={selectedNation}
-              pops={pops}
-              characters={charactersState.characters}
-              session={current}
-              docked
-              onOpenCharacter={openCharacter}
-              onChange={(patch) => nationsState.update(selectedNation.id, patch)}
-              onConvert={() => queueConvert(selectedNation.id)}
-              onClose={() => setSelectedNationId(null)}
-            />
-          </div>
-        )}
         <div className="ink-panel absolute top-3 right-3 z-chrome hidden h-[calc(100%-4.5rem)] w-64 overflow-hidden lg:block">
           <Outliner
             nations={nations}
@@ -336,6 +664,17 @@ export default function TableApp() {
             }}
           />
         </div>
+        {friday && (
+          <aside className="friday-dock ink-panel ink-scroll" aria-label="Friday war dock">
+            <header className="ink-hairline flex items-baseline justify-between bg-raised px-3 py-2">
+              <h2 className="font-display text-sm tracking-[0.16em] text-gold">Friday</h2>
+              <span className="text-[11px] text-muted tabular">
+                {openWars} war{openWars === 1 ? "" : "s"} · turns ~4
+              </span>
+            </header>
+            <div className="p-3">{renderWarBoard()}</div>
+          </aside>
+        )}
       </div>
 
       {dock !== "none" && (
@@ -389,10 +728,11 @@ export default function TableApp() {
         {log}
       </p>
 
-      {windows.map((win) => (
+      {windows.map((win, i) => (
         <WindowFrame
           key={win.id}
           win={win}
+          zIndex={2000 + i}
           onFocus={(id) =>
             setWindows((cur) => {
               const w = cur.find((x) => x.id === id);
@@ -428,15 +768,7 @@ export default function TableApp() {
               onDeny={(id) => setStatus(id, "denied")}
             />
           )}
-          {win.kind === "war" && (
-            <WarWindow
-              wars={warsState.wars}
-              armies={armiesState.armies}
-              nations={nations}
-              onTerrain={(id, terrain: TerrainId) => warsState.update(id, { terrain })}
-              onResolve={resolveWar}
-            />
-          )}
+          {win.kind === "war" && renderWarBoard()}
           {win.kind === "character" &&
             (() => {
               const ch = charactersState.characters.find((c) => c.id === win.payload);
@@ -454,6 +786,24 @@ export default function TableApp() {
           )}
         </WindowFrame>
       ))}
+      {(() => {
+        const war = warsState.wars.find((w) => w.id === reportWarId);
+        if (!war?.report) return null;
+        return (
+          <BattleReport
+            report={war.reel?.report ?? war.report}
+            nations={nations}
+            attackerNationId={war.attackerNationId}
+            defenderNationId={war.defenderNationId}
+            mapWidth={current.mapWidth}
+            mapHeight={current.mapHeight}
+            reelLive={Boolean(war.reel)}
+            phaseIndex={war.reel?.index ?? Math.max(0, (war.report.phases.length || 1) - 1)}
+            onContinue={continueBattle}
+            onOverride={staffLive ? (grade) => overrideWarGrade(war.id, grade) : undefined}
+          />
+        );
+      })()}
     </main>
   );
 }

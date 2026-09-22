@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, use, type ComponentType } from "react";
-import type { Army, Nation, Pop, ResourceNode } from "@/engine/types";
+import type { Army, MarchMode, Nation, Pop, ResourceNode } from "@/engine/types";
 
 type Props = {
   mapWidth: number;
@@ -25,7 +25,9 @@ type Props = {
   onRemoveNode: (id: string) => void;
   onUpdateArmy: (id: string, patch: Partial<Army>) => void;
   onRemoveArmy: (id: string) => void;
-  onStartMarch: (id: string) => void;
+  onStartMarch: (id: string, mode: MarchMode) => void;
+  onAttack: (attackerId: string, defenderId: string) => void;
+  onEntrench: (id: string) => void;
 };
 
 const worldMapPromise: Promise<{ default: ComponentType<Props> }> = import("./WorldMap");

@@ -1,3 +1,5 @@
+import type { UnitTypeId } from "../packs/core/units.ts";
+
 export type PopId = string;
 export type NationId = string;
 export type ResourceId = string;
@@ -70,6 +72,17 @@ export type Composition = {
   melee: number;
 };
 
+export type ArmyUnit = {
+  id: string;
+  typeId: UnitTypeId;
+  name?: string;
+  fielded: number;
+};
+
+export type ArmyPosture = "plain" | "entrenched" | "forceMarched" | "skirmish";
+export type ArmyCover = "field" | "garrison" | "covering";
+export type MarchMode = "march" | "force" | "skirmish";
+
 export type Army = {
   id: ArmyId;
   x: number;
@@ -77,6 +90,10 @@ export type Army = {
   ownerId: NationId;
   strength: number;
   composition?: Composition;
+  units?: ArmyUnit[];
+  posture?: ArmyPosture;
+  moveUsed?: boolean;
+  actionUsed?: boolean;
 };
 
 export type CharacterStats = {
@@ -112,20 +129,77 @@ export type PhaseResult = {
   id: PhaseId;
   attackerPower: number;
   defenderPower: number;
-  winner: "attacker" | "defender";
+  winner: "attacker" | "defender" | "draw";
   attackerLoss: number;
   defenderLoss: number;
 };
 
+export type BattleGrade =
+  | "legendary"
+  | "crushing"
+  | "hard fought"
+  | "pyrrhic"
+  | "narrow"
+  | "inconclusive";
+
+export type BattleSide = "attacker" | "defender" | "inconclusive";
+
+export type UnitLine = {
+  armyId: ArmyId;
+  nationId: NationId;
+  unitId: string;
+  typeId: string;
+  name: string;
+  fielded: number;
+  remain: number;
+  dead: number;
+};
+
 export type BattleReport = {
-  attackerId: ArmyId;
-  defenderId: ArmyId;
+  attackerIds: ArmyId[];
+  defenderIds: ArmyId[];
   terrain: TerrainId;
   phases: PhaseResult[];
-  winner: "attacker" | "defender";
+  winner: BattleSide;
   wipe: boolean;
+  grade: BattleGrade;
+  staffGrade?: BattleGrade;
+  decisivePhase: PhaseId | null;
+  attackerTags: string[];
+  defenderTags: string[];
+  units: UnitLine[];
+  casualtiesByNation: { nationId: NationId; dead: number }[];
+  attackerLoss: number;
+  defenderLoss: number;
   summary: string;
+  x?: number;
+  y?: number;
 };
+
+export type StaffRemain = {
+  unitId: string;
+  remain: number;
+};
+
+export type BattleReel = {
+  index: number;
+  frozen: boolean;
+  leftoverAtk: boolean;
+  leftoverDef: boolean;
+  occupyX: number;
+  occupyY: number;
+  attackers: Army[];
+  defenders: Army[];
+  fielded: UnitLine[];
+  terrain: TerrainId;
+  attackerTags: string[];
+  defenderTags: string[];
+  phases: PhaseResult[];
+  report: BattleReport;
+  done: boolean;
+};
+
+export type TableMode = "peace" | "friday";
 
 export type WarStatus = "declared" | "resolved";
 
@@ -133,12 +207,18 @@ export type War = {
   id: WarId;
   attackerArmyId: ArmyId;
   defenderArmyId: ArmyId;
+  attackerArmyIds: ArmyId[];
+  defenderArmyIds: ArmyId[];
   attackerNationId: NationId;
   defenderNationId: NationId;
   title: string;
   terrain: TerrainId;
   status: WarStatus;
+  warTurns: number;
+  warTurn: number;
+  pendingAttack?: boolean;
   report?: BattleReport;
+  reel?: BattleReel;
 };
 
 export type Session = {

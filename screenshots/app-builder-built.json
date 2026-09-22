@@ -7,8 +7,8 @@
       "status": 200,
       "title": "Inkunzi",
       "hasCanvas": false,
-      "bodyTextLen": 768,
-      "bodyTextHash": "56937c5f4c9a64bafb5eb638286dedcbf4e8fb9cbb78e7ff16e3d669c2635791",
+      "bodyTextLen": 831,
+      "bodyTextHash": "e727f0fe9a9f71821dfc02e3abfe1d6d346b1ae6966b2a5a98d9aafa90890f29",
       "bodyTextPrefix": "INKUNZI Inkunzi TURN 1 Bronze · Day 1 · 15,000 / pop Staffed tab",
       "horizontalOverflow": false,
       "consoleErrors": [],
@@ -21,9 +21,9 @@
       "status": 200,
       "title": "Inkunzi",
       "hasCanvas": false,
-      "bodyTextLen": 76,
-      "bodyTextHash": "7ef6e8b793692658f60e68141958338b2b95ca4087874bfaa726a2476c6cb475",
-      "bodyTextPrefix": "TURN 1 Staff Friday Saturday INKUNZI Unrolling the painting… Que",
+      "bodyTextLen": 380,
+      "bodyTextHash": "b3ee3c9545774648afd6ca95cd9d526039f34a9dc50b9db8f315b0aa961e0999",
+      "bodyTextPrefix": "TURN 1 Staff Peace Friday Saturday INKUNZI Unrolling the paintin",
       "horizontalOverflow": false,
       "consoleErrors": [],
       "pageErrors": [],
@@ -33,9 +33,6 @@
   "brandWarnings": [],
   "authWarnings": [],
   "verdictFile": "/workspace/screenshots/app-builder-built.json",
-  "divergesFromBaseline": true,
-  "baselineReasons": [
-    "desktop: body text changed (860 -> 768 chars, hash mismatch)",
-    "mobile: body text replaced (similar length, page start changed)"
-  ]
+  "divergesFromBaseline": false,
+  "baselineReasons": []
 }

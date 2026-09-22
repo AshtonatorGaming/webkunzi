@@ -1,4 +1,15 @@
-export type ActionKind = "flavor" | "march" | "war" | "claim" | "convert" | "spy" | "build";
+export type ActionKind =
+  | "flavor"
+  | "march"
+  | "attack"
+  | "entrench"
+  | "skirmish"
+  | "forceMarch"
+  | "war"
+  | "claim"
+  | "convert"
+  | "spy"
+  | "build";
 export type ActionStatus = "pending" | "accepted" | "denied";
 export type ActionResult = "unset" | "success" | "mixed" | "fail";
 export type ActionLane = 1 | 2 | 3;
@@ -20,10 +31,11 @@ export type GameAction = {
   nationId?: string;
   defenderArmyId?: string;
   warId?: string;
+  marchMode?: "march" | "force" | "skirmish";
 };
 
 export function laneDefaults(kind: ActionKind): Pick<GameAction, "lane" | "auto" | "needsRoll" | "dc"> {
-  if (kind === "march" || kind === "build") {
+  if (kind === "march" || kind === "build" || kind === "entrench" || kind === "forceMarch" || kind === "skirmish") {
     return { lane: 1, auto: true };
   }
   if (kind === "convert") {

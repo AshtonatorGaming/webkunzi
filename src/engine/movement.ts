@@ -1,6 +1,8 @@
-import type { Army, Pop, PopKind, Session } from "./types";
+import type { Army, ArmyCover, Pop, PopKind, Session } from "./types";
 
 export const ZOC_PX = 64;
+export const GARRISON_PX = 18;
+export const STACK_PX = 18;
 
 const RETREAT_KINDS = new Set<PopKind>(["town", "city", "fort"]);
 
@@ -51,6 +53,15 @@ export function enemyBlockers(army: Army, armies: Army[]): Army[] {
   );
 }
 
+export function inZocOf(army: Army, other: Army, radius = ZOC_PX): boolean {
+  if (army.id === other.id) return false;
+  return distance(army.x, army.y, other.x, other.y) <= radius;
+}
+
+/**
+ * ZOC blocks pathing THROUGH a disk. Approach TO a flag/town inside the disk
+ * is legal. Leaving the disk is a Move. Starting already inside is not a trap.
+ */
 export function stopForZoc(
   fromX: number,
   fromY: number,
@@ -67,9 +78,9 @@ export function stopForZoc(
   };
 
   for (const b of blockers) {
-    if (distance(fromX, fromY, b.x, b.y) <= radius) {
-      return { x: fromX, y: fromY, blockerId: b.id };
-    }
+    const startInside = distance(fromX, fromY, b.x, b.y) <= radius;
+    const endInside = distance(toX, toY, b.x, b.y) <= radius;
+    if (startInside || endInside) continue;
     const hit = firstCircleHit(fromX, fromY, toX, toY, b.x, b.y, radius);
     if (!hit || hit.t >= best.t) continue;
     best = { x: hit.x, y: hit.y, blockerId: b.id, t: hit.t };
@@ -82,6 +93,17 @@ export function isRetreatNode(pop: Pop): boolean {
   if (pop.kind === "camp") return false;
   if (pop.kind && RETREAT_KINDS.has(pop.kind)) return true;
   return pop.settled && pop.kind !== "pop";
+}
+
+export function coverOf(army: Army, pops: Pop[]): ArmyCover {
+  const holds = pops.filter((p) => p.ownerId === army.ownerId && isRetreatNode(p));
+  let covering = false;
+  for (const pop of holds) {
+    const d = distance(army.x, army.y, pop.x, pop.y);
+    if (d <= GARRISON_PX) return "garrison";
+    if (d <= ZOC_PX) covering = true;
+  }
+  return covering ? "covering" : "field";
 }
 
 export function nearestTown(
@@ -124,4 +146,38 @@ export function retreatTowardTown(
     x: army.x + (dx / len) * 80,
     y: army.y + (dy / len) * 80,
   };
+}
+
+export function stackKey(army: Army, gap = STACK_PX): string {
+  return `${Math.round(army.x / gap)}_${Math.round(army.y / gap)}`;
+}
+
+export function stackOffsets(
+  armies: Army[],
+  gap = STACK_PX,
+): Map<string, { dx: number; dy: number }> {
+  const groups = new Map<string, Army[]>();
+  for (const army of armies) {
+    const key = stackKey(army, gap);
+    const group = groups.get(key) ?? [];
+    group.push(army);
+    groups.set(key, group);
+  }
+  const out = new Map<string, { dx: number; dy: number }>();
+  for (const group of groups.values()) {
+    if (group.length === 1) {
+      out.set(group[0]!.id, { dx: 0, dy: 0 });
+      continue;
+    }
+    group.forEach((army, i) => {
+      const ang = (i / group.length) * Math.PI * 2 - Math.PI / 2;
+      out.set(army.id, { dx: Math.cos(ang) * 16, dy: Math.sin(ang) * 16 });
+    });
+  }
+  return out;
+}
+
+export function stackedWith(army: Army, armies: Army[], gap = STACK_PX): Army[] {
+  const key = stackKey(army, gap);
+  return armies.filter((a) => stackKey(a, gap) === key);
 }

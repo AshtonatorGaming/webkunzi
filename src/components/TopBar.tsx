@@ -2,18 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import Crest from "@/components/Crest";
-import type { Session } from "@/engine/types";
+import type { Session, TableMode } from "@/engine/types";
 import { ageById } from "@/packs/core/ages";
+import { cn } from "@/lib/cn";
 
 export default function TopBar({
   session,
   staffLive,
+  tableMode,
   openWars,
   log,
   onStaffLive,
+  onTableMode,
   onDay,
   onSaturday,
-  onFriday,
   onClock,
   onQueue,
   onExport,
@@ -21,12 +23,13 @@ export default function TopBar({
 }: {
   session: Session;
   staffLive: boolean;
+  tableMode: TableMode;
   openWars: number;
   log: string;
   onStaffLive: (next: boolean) => void;
+  onTableMode: (mode: TableMode) => void;
   onDay: () => void;
   onSaturday: () => void;
-  onFriday: () => void;
   onClock: () => void;
   onQueue: () => void;
   onExport: () => void;
@@ -63,9 +66,30 @@ export default function TopBar({
           />
           Staff
         </label>
-        <Button variant="gold" onClick={onFriday}>
-          Friday{openWars ? ` ${openWars}` : ""}
-        </Button>
+        <div className="flex overflow-hidden rounded-sm border border-gold-dim" role="group" aria-label="Table mode">
+          <button
+            type="button"
+            aria-pressed={tableMode === "peace"}
+            className={cn(
+              "min-h-9 px-3 text-sm",
+              tableMode === "peace" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
+            )}
+            onClick={() => onTableMode("peace")}
+          >
+            Peace
+          </button>
+          <button
+            type="button"
+            aria-pressed={tableMode === "friday"}
+            className={cn(
+              "min-h-9 px-3 text-sm",
+              tableMode === "friday" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
+            )}
+            onClick={() => onTableMode("friday")}
+          >
+            Friday{openWars ? ` ${openWars}` : ""}
+          </button>
+        </div>
         <Button variant="staff" onClick={onSaturday}>
           Saturday
         </Button>

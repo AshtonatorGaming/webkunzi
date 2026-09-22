@@ -13,9 +13,10 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import { CRS, LatLngBounds, divIcon } from "leaflet";
-import type { Army, Nation, Pop, PopKind, ResourceNode } from "@/engine/types";
+import type { Army, MarchMode, Nation, Pop, PopKind, ResourceNode } from "@/engine/types";
 import { MAP_INK, MAP_LAYERS, colorFromKey, type MapLayer } from "@/engine/mapLayers";
-import { distance, enemyBlockers, stopForZoc, ZOC_PX } from "@/engine/movement";
+import { distance, enemyBlockers, stackedWith, stackOffsets, stopForZoc, ZOC_PX } from "@/engine/movement";
+import { armyStrength, armiesInContact, isGhost } from "@/engine/battle";
 import PopEditor from "./PopEditor";
 import NodeEditor from "./NodeEditor";
 import ArmyEditor from "./ArmyEditor";
@@ -46,20 +47,25 @@ type Props = {
   onRemoveNode: (id: string) => void;
   onUpdateArmy: (id: string, patch: Partial<Army>) => void;
   onRemoveArmy: (id: string) => void;
-  onStartMarch: (id: string) => void;
+  onStartMarch: (id: string, mode: MarchMode) => void;
+  onAttack: (attackerId: string, defenderId: string) => void;
+  onEntrench: (id: string) => void;
 };
 
 function safeHex(color: string): string {
   return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : "#c8c4bc";
 }
 
-function bannerIcon(color: string, strength: number, state: "idle" | "selected" | "march") {
+function bannerIcon(color: string, strength: number, state: "idle" | "selected" | "march", ghost: boolean) {
   const ring = state === "march" ? "#e8dcc8" : state === "selected" ? "#c4a574" : "#1a1814";
+  const ghostClass = ghost ? " ink-banner-ghost" : "";
   return divIcon({
     className: "ink-banner",
     iconSize: [26, 40],
-    iconAnchor: [8, 38],
-    html: `<div class="ink-banner-inner" style="--c:${safeHex(color)};--ring:${ring}"><span class="ink-banner-flag"></span><span class="ink-banner-n">${Math.round(strength)}</span></div>`,
+    iconAnchor: [13, 40],
+    popupAnchor: [0, -36],
+    tooltipAnchor: [0, -36],
+    html: `<div class="ink-banner-inner${ghostClass}" style="--c:${safeHex(color)};--ring:${ring}"><span class="ink-banner-pole"></span><span class="ink-banner-flag"></span><span class="ink-banner-n">${Math.round(strength)}</span></div>`,
   });
 }
 
@@ -91,6 +97,7 @@ function MapPointer({
   onMoveArmy,
   onPreview,
   onSelectArmy,
+  onPickStack,
 }: {
   tool: Tool;
   marchingArmyId: string | null;
@@ -102,6 +109,7 @@ function MapPointer({
   onMoveArmy: (id: string, x: number, y: number) => void;
   onPreview: (preview: Preview | null) => void;
   onSelectArmy: (id: string | null) => void;
+  onPickStack: (ids: string[]) => void;
 }) {
   useMapEvents({
     mousemove(e) {
@@ -139,7 +147,17 @@ function MapPointer({
         return;
       }
       if (!marchingArmyId) {
+        const near = armies.filter((a) => distance(a.x, a.y, x, y) <= 22);
+        if (near.length > 1) {
+          onPickStack(near.map((a) => a.id));
+          return;
+        }
+        if (near.length === 1) {
+          onSelectArmy(near[0]!.id);
+          return;
+        }
         onSelectArmy(null);
+        onPickStack([]);
         return;
       }
       const army = armies.find((a) => a.id === marchingArmyId);
@@ -179,11 +197,15 @@ export default function WorldMap({
   onUpdateArmy,
   onRemoveArmy,
   onStartMarch,
+  onAttack,
+  onEntrench,
 }: Props) {
   const [tool, setTool] = useState<Tool>("none");
   const [layer, setLayer] = useState<MapLayer>("political");
   const [preview, setPreview] = useState<Preview | null>(null);
+  const [pickStack, setPickStack] = useState<string[]>([]);
   const colorById = useMemo(() => new Map(nations.map((n) => [n.id, n.color])), [nations]);
+  const offsets = useMemo(() => stackOffsets(armies), [armies]);
   const PAD = 400;
   const BOUNDS = useMemo(() => new LatLngBounds([0, 0], [mapHeight, mapWidth]), [mapHeight, mapWidth]);
   const VIEW_BOUNDS = useMemo(
@@ -256,7 +278,7 @@ export default function WorldMap({
         crs={CRS.Simple}
         bounds={BOUNDS}
         maxBounds={VIEW_BOUNDS}
-        maxBoundsViscosity={0.6}
+        maxBoundsViscosity={0.2}
         minZoom={-3}
         maxZoom={3}
         style={{ height: "100%", width: "100%", background: "var(--color-map)" }}
@@ -274,6 +296,7 @@ export default function WorldMap({
           onMoveArmy={onMoveArmy}
           onPreview={setPreview}
           onSelectArmy={onSelectArmy}
+          onPickStack={setPickStack}
         />
         {showAllZoc &&
           armies.map((army) => (
@@ -380,36 +403,97 @@ export default function WorldMap({
           armies.map((army) => {
             const state =
               army.id === marchingArmyId ? "march" : army.id === selectedArmyId ? "selected" : "idle";
+            const off = offsets.get(army.id) ?? { dx: 0, dy: 0 };
+            const stack = stackedWith(army, armies);
             return (
               <Marker
                 key={army.id}
-                position={[army.y, army.x]}
-                icon={bannerIcon(colorById.get(army.ownerId) ?? MAP_INK.unset, army.strength, state)}
+                position={[army.y + off.dy, army.x + off.dx]}
+                icon={bannerIcon(
+                  colorById.get(army.ownerId) ?? MAP_INK.unset,
+                  armyStrength(army),
+                  state,
+                  isGhost(army),
+                )}
                 eventHandlers={{
                   click: (e) => {
                     e.originalEvent.stopPropagation();
                     if (tool !== "none") return;
+                    const selected = armies.find((a) => a.id === selectedArmyId);
+                    if (
+                      selected &&
+                      selected.id !== army.id &&
+                      selected.ownerId !== army.ownerId &&
+                      armiesInContact(selected, army)
+                    ) {
+                      onAttack(selected.id, army.id);
+                      e.target.closePopup();
+                      return;
+                    }
+                    if (stack.length > 1) setPickStack(stack.map((a) => a.id));
+                    else setPickStack([]);
                     onSelectArmy(army.id);
                   },
                 }}
               >
-                <Tooltip direction="top" offset={[0, -28]}>
-                  {nations.find((n) => n.id === army.ownerId)?.name ?? army.ownerId} · {Math.round(army.strength)}
+                <Tooltip direction="top" offset={[0, -36]}>
+                  {nations.find((n) => n.id === army.ownerId)?.name ?? army.ownerId} · {isGhost(army) ? "ghost" : Math.round(armyStrength(army))}
                 </Tooltip>
                 <Popup>
+                  {stack.length > 1 && (
+                    <div className="mb-2 border-b border-border pb-2 text-xs">
+                      <div className="mb-1 text-[11px] tracking-[0.12em] text-gold">STACKED</div>
+                      {stack.map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          className="block w-full py-1 text-left"
+                          onClick={() => onSelectArmy(a.id)}
+                        >
+                          {nations.find((n) => n.id === a.ownerId)?.name ?? a.ownerId} · {Math.round(armyStrength(a))}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <ArmyEditor
                     army={army}
+                    armies={armies}
                     nations={nations}
                     marching={army.id === marchingArmyId}
+                    staffLive={staffLive}
                     onChange={(patch) => onUpdateArmy(army.id, patch)}
                     onDelete={() => onRemoveArmy(army.id)}
-                    onMarch={() => onStartMarch(army.id)}
+                    onMarch={(mode) => onStartMarch(army.id, mode)}
+                    onAttack={(defenderId) => onAttack(army.id, defenderId)}
+                    onEntrench={() => onEntrench(army.id)}
                   />
                 </Popup>
               </Marker>
             );
           })}
       </MapContainer>
+      {pickStack.length > 1 && (
+        <div className="absolute top-14 left-3 z-chrome w-48 rounded-sm border border-gold-dim bg-bg/95 p-2 md:top-3">
+          <div className="mb-1 text-[11px] tracking-[0.14em] text-gold">STACK</div>
+          {pickStack.map((id) => {
+            const a = armies.find((x) => x.id === id);
+            if (!a) return null;
+            return (
+              <button
+                key={id}
+                type="button"
+                className={cn(
+                  "block w-full py-1 text-left text-xs",
+                  selectedArmyId === id && "text-gold",
+                )}
+                onClick={() => onSelectArmy(id)}
+              >
+                {nations.find((n) => n.id === a.ownerId)?.name ?? a.ownerId} · {Math.round(armyStrength(a))}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
