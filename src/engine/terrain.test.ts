@@ -648,3 +648,111 @@ test("earthlike wraps and theater does not", () => {
   assert.equal(theater.wrap, false);
 });
 
+test("earthlike grows islands besides the two mains", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const bodies = landBodies(world, 3).sort((a, b) => b.n - a.n);
+  const extras = bodies.slice(2);
+  assert.ok(extras.length >= 3, `island bodies ${extras.length} sizes ${bodies.map((b) => b.n).join(",")}`);
+});
+
+test("no single cover sheets the land", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const counts = new Map<number, number>();
+  let land = 0;
+  for (const id of world.terrain) {
+    if (id === 0 || id === 1 || id === 16) continue;
+    land += 1;
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  for (const [id, n] of counts) {
+    assert.ok(n / land <= 0.55, `cover ${id} sheets ${n}/${land}`);
+  }
+  for (const id of [2, 3, 7, 8, 11, 12, 13]) {
+    assert.ok((counts.get(id) ?? 0) > 30, `cover ${id} ${(counts.get(id) ?? 0)}`);
+  }
+});
+
+test("ranges are a thin belt and the coast is not a stair", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const { cols, rows, relief, terrain } = world;
+  const dry = (id: number) => id !== 0 && id !== 1 && id !== 16;
+  let runs = 0;
+  let width = 0;
+  let wash = 0;
+  for (let y = 0; y < rows; y++) {
+    let run = 0;
+    const flush = () => {
+      if (run > 0) {
+        runs += 1;
+        width += run;
+        run = 0;
+      }
+    };
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (dry(terrain[i]!) && relief[i]! >= 4) run += 1;
+      else flush();
+    }
+    flush();
+  }
+  const mean = runs ? width / runs : 0;
+  assert.ok(mean >= 2 && mean <= 8, `belt width ${mean} runs ${runs}`);
+  for (let x = 0; x < cols; x++) {
+    let n = 0;
+    let landRows = 0;
+    for (let y = 0; y < rows; y++) {
+      const i = y * cols + x;
+      if (!dry(terrain[i]!)) continue;
+      landRows += 1;
+      if (relief[i]! >= 4) n += 1;
+    }
+    if (landRows > 12 && n / landRows > 0.18) wash += 1;
+  }
+  assert.ok(wash < 80, `washboard columns ${wash}`);
+  let shore = 0;
+  let jagged = 0;
+  const side: ReadonlyArray<readonly [number, number]> = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (!dry(terrain[i]!)) continue;
+      let landN = 0;
+      let waterN = 0;
+      for (const [dx, dy] of side) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        const xx = (x + dx + cols) % cols;
+        if (dry(terrain[yy * cols + xx]!)) landN += 1;
+        else waterN += 1;
+      }
+      if (waterN < 1) continue;
+      shore += 1;
+      if (landN <= 2) jagged += 1;
+    }
+  }
+  const stair = shore ? jagged / shore : 1;
+  assert.ok(stair > 0.15 && stair < 0.85, `coast stair ${stair} shore ${shore}`);
+});
+
+test("islands layout is many bodies and pangaea stays one", () => {
+  const isles = generateTerrain("inkunzi-islands", LAYOUT_RECIPES.islands.sea, {
+    ...LAYOUT_RECIPES.islands,
+    layout: "islands",
+    level: "standard",
+  });
+  const pangaea = generateTerrain("inkunzi-pangaea", LAYOUT_RECIPES.pangaea.sea, {
+    ...LAYOUT_RECIPES.pangaea,
+    layout: "pangaea",
+    level: "standard",
+  });
+  const isleBodies = landBodies(isles, 8);
+  const panBodies = landBodies(pangaea, 80);
+  assert.ok(isleBodies.length >= 6, `islands bodies ${isleBodies.length}`);
+  assert.equal(panBodies.length, 1, `pangaea bodies ${panBodies.length}`);
+});
+
