@@ -638,9 +638,11 @@ export default function WorldMap({
     if (!field) return "";
     const brief = cellBrief(field, x, y, mapWidth, mapHeight);
     const claim = brief.claim ? (nations.find((n) => n.id === brief.claim)?.name ?? "") : "";
-    const bits = [brief.biome];
+    const tags = brief.tags?.length ? brief.tags.join(" + ") : brief.biome;
+    const bits = [tags];
     if (brief.relief) bits.push(brief.relief);
     bits.push(brief.climate, brief.band);
+    if (brief.effects) bits.push(`move ${brief.effects.move}`, `forage ${brief.effects.forage}`);
     if (claim) bits.push(claim);
     return bits.join(" · ");
   }

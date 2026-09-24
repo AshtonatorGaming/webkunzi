@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  applyWeather,
+  cellStack,
+  effects,
   generateTerrain,
   gridForMap,
   LAYOUT_RECIPES,
@@ -54,6 +57,8 @@ test("terrain pack roundtrips climate and wrap", () => {
   assert.equal(back!.temp[1234], world.temp[1234]);
   assert.equal(back!.moist[1234], world.moist[1234]);
   assert.equal(back!.relief[1234], world.relief[1234]);
+  assert.equal(back!.water[1234], world.water[1234]);
+  assert.equal(back!.cover[1234], world.cover[1234]);
   const theater = generateTerrain("pack", 40, { wrap: false });
   assert.equal(theater.wrap, false);
 });
@@ -62,11 +67,12 @@ test("starter nations are raised on land", () => {
   const world = generateTerrain("inkunzi", 46);
   assert.ok(world.hearths.length >= 3, `hearths ${world.hearths.length}`);
   for (const h of world.hearths) {
-    const nx = h.x / world.cols;
-    assert.ok(nx < 0.5, `hearth x ${nx}`);
-    const id = world.terrain[h.y * world.cols + h.x];
-    assert.notEqual(id, 0);
-    assert.notEqual(id, 16);
+    const i = h.y * world.cols + h.x;
+    const w = world.water[i];
+    assert.ok(w === 1 || w === 2, `hearth water ${w}`);
+    assert.notEqual(world.cover[i], 0);
+    assert.notEqual(world.cover[i], 6);
+    assert.notEqual(world.cover[i], 16);
   }
 });
 
@@ -173,7 +179,7 @@ test("staff can size the rectangle without blowing the grid", () => {
   assert.equal(world.wrap, true);
 });
 
-test("table and vast keep the same plates", () => {
+test("table and vast keep the same height field", () => {
   const table = generateTerrain("inkunzi", 46, { mapWidth: 6145, mapHeight: 3530 });
   const vast = generateTerrain("inkunzi", 46, { mapWidth: 14400, mapHeight: 8100 });
   const landish = (field: ReturnType<typeof generateTerrain>, nx: number, ny: number) => {
@@ -204,30 +210,6 @@ test("a painted color lands on the matching ground", () => {
   assert.equal(nearestTerrain((n >> 16) & 255, (n >> 8) & 255, n & 255), forest.id);
 });
 
-test("old world and new world are split by an ocean", () => {
-  const world = generateTerrain("inkunzi", 46);
-  const band = (x0: number, x1: number) => {
-    let land = 0;
-    let n = 0;
-    const xA = Math.floor(world.cols * x0);
-    const xB = Math.floor(world.cols * x1);
-    for (let y = Math.floor(world.rows * 0.2); y < world.rows * 0.8; y++) {
-      for (let x = xA; x < xB; x++) {
-        const id = world.terrain[y * world.cols + x]!;
-        if (id !== 0 && id !== 16) land += 1;
-        n += 1;
-      }
-    }
-    return land / n;
-  };
-  const old = band(0.06, 0.46);
-  const gap = band(0.48, 0.6);
-  const neu = band(0.64, 0.92);
-  assert.ok(old > 0.18, `old world ${old}`);
-  assert.ok(neu > 0.12, `new world ${neu}`);
-  assert.ok(gap < old * 0.55 && gap < neu * 0.7, `gap ${gap} old ${old} new ${neu}`);
-});
-
 test("platforms dominate and belts stay a minority", () => {
   const world = generateTerrain("inkunzi", 46);
   let land = 0;
@@ -253,27 +235,19 @@ test("platforms dominate and belts stay a minority", () => {
   void hill;
 });
 
-test("hearths sit on the old world and strata follow the belts", () => {
+test("hearths sit on river land and strata stay packed", () => {
   const world = generateTerrain("inkunzi", 46);
   assert.ok(world.hearths.length >= 3);
   let riverish = 0;
   for (const h of world.hearths) {
-    assert.ok(h.x / world.cols < 0.5);
-    const id = world.terrain[h.y * world.cols + h.x]!;
+    const i = h.y * world.cols + h.x;
+    const id = world.cover[i]!;
     assert.notEqual(id, 0);
     assert.notEqual(id, 6);
     assert.notEqual(id, 16);
-    for (const [dx, dy] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ] as const) {
-      const yy = h.y + dy;
-      const xx = (h.x + dx + world.cols) % world.cols;
-      if (yy < 0 || yy >= world.rows) continue;
-      if (world.terrain[yy * world.cols + xx] === 9) riverish += 1;
-    }
+    const w = world.water[i]!;
+    assert.ok(w === 1 || w === 2, `hearth water ${w}`);
+    riverish += 1;
   }
   assert.ok(riverish >= 3, `liveable hearths ${riverish}`);
   let fertile = 0;
@@ -285,8 +259,7 @@ test("hearths sit on the old world and strata follow the belts", () => {
   let sky = 0;
   let open = 0;
   let openRange = 0;
-  let desert = 0;
-  let desertCloud = 0;
+  let skySame = 0;
   for (let i = 0; i < world.under.length; i++) {
     const u = world.under[i] ?? 0;
     if (u) under += 1;
@@ -295,16 +268,13 @@ test("hearths sit on the old world and strata follow the belts", () => {
       if ((world.relief[i] ?? 0) >= 4) openRange += 1;
     }
     if (world.sky[i]) sky += 1;
-    if (world.terrain[i] === 8) {
-      desert += 1;
-      if (world.sky[i]) desertCloud += 1;
-    }
+    if (world.sky[i] === world.terrain[i]) skySame += 1;
   }
   assert.ok(under > 20, `under ${under}`);
   assert.ok(open > 20, `open under ${open}`);
   assert.ok(openRange / Math.max(1, open) < 0.45, `under follows range ${openRange}/${open}`);
   assert.ok(sky > 0, `sky ${sky}`);
-  assert.ok(desert === 0 || desertCloud / desert < 0.08, `desert cloud ${desertCloud}/${desert}`);
+  assert.ok(skySame / world.sky.length < 0.15, `sky copy ${skySame}`);
   assert.ok(world.columns.some((c) => c.dir === "down"));
   assert.ok(world.columns.some((c) => c.dir === "up"));
   assert.ok(world.gates.length >= 1);
@@ -319,9 +289,24 @@ test("hearths sit on the old world and strata follow the belts", () => {
     if (world.seen[h.y * world.cols + h.x]) seenHearth += 1;
   }
   assert.equal(seenHearth, world.hearths.length);
-  const farX = Math.floor(world.cols * 0.9);
-  const farY = Math.floor(world.rows * 0.45);
-  const far = farY * world.cols + farX;
+  let far = -1;
+  for (let y = 0; y < world.rows && far < 0; y += 2) {
+    for (let x = 0; x < world.cols; x += 2) {
+      let close = false;
+      for (const h of world.hearths) {
+        let dx = Math.abs(h.x - x);
+        if (world.wrap) dx = Math.min(dx, world.cols - dx);
+        if (dx <= 16 && Math.abs(h.y - y) <= 16) close = true;
+      }
+      if (!close) {
+        far = y * world.cols + x;
+        break;
+      }
+    }
+  }
+  assert.ok(far >= 0, "no unseen cell");
+  const farY = (far / world.cols) | 0;
+  const farX = far - farY * world.cols;
   assert.equal(world.seen[far], 0);
   let seenN = 0;
   for (const v of world.seen) if (v) seenN += 1;
@@ -470,90 +455,6 @@ function landBodies(world: ReturnType<typeof generateTerrain>, min: number) {
   return bodies.filter((b) => b.y > 0.08 && b.y < 0.92);
 }
 
-test("lee of the old-world belt is drier than the windward side", () => {
-  const world = generateTerrain("inkunzi", 46);
-  let lee = 0;
-  let leeN = 0;
-  let wind = 0;
-  let windN = 0;
-  const { cols, rows, relief, moist, terrain } = world;
-  const land = (id: number) => id !== 0 && id !== 1 && id !== 16;
-  for (let y = Math.floor(rows * 0.2); y < rows * 0.8; y++) {
-    for (let x = Math.floor(cols * 0.06); x < cols * 0.48; x++) {
-      const i = y * cols + x;
-      if (!land(terrain[i]!)) continue;
-      let west = false;
-      let east = false;
-      for (let d = 1; d <= 12; d++) {
-        const wl = relief[y * cols + Math.max(0, x - d)];
-        const el = relief[y * cols + Math.min(cols - 1, x + d)];
-        if (wl === 4 || wl === 5) west = true;
-        if (el === 4 || el === 5) east = true;
-      }
-      if (west && !east) {
-        lee += moist[i]!;
-        leeN += 1;
-      } else if (east && !west) {
-        wind += moist[i]!;
-        windN += 1;
-      }
-    }
-  }
-  assert.ok(leeN > 20 && windN > 20, `samples lee ${leeN} wind ${windN}`);
-  assert.ok(lee / leeN < wind / windN, `lee ${lee / leeN} wind ${wind / windN}`);
-});
-
-test("the gap-facing shore is thinner than the outer shelf", () => {
-  const world = generateTerrain("inkunzi", 46);
-  const { cols, rows, terrain } = world;
-  const depth = (x: number, y: number, dir: number) => {
-    let d = 0;
-    for (let k = 1; k <= 12; k++) {
-      const xx = x + dir * k;
-      if (xx < 0 || xx >= cols) return null;
-      const id = terrain[y * cols + xx]!;
-      if (id === 1) d += 1;
-      else if (id === 0 || id === 16) return d;
-      else return null;
-    }
-    return null;
-  };
-  let active = 0;
-  let activeN = 0;
-  let passive = 0;
-  let passiveN = 0;
-  const dry = (id: number) => id !== 0 && id !== 1 && id !== 16;
-  for (let y = Math.floor(rows * 0.25); y < rows * 0.75; y += 2) {
-    for (let x = Math.floor(cols * 0.08); x < cols * 0.4; x++) {
-      const id = terrain[y * cols + x]!;
-      if (!dry(id)) continue;
-      const north = terrain[(y - 1) * cols + x]!;
-      const south = terrain[(y + 1) * cols + x]!;
-      if (!dry(north) || !dry(south)) continue;
-      const east = terrain[y * cols + x + 1]!;
-      const west = terrain[y * cols + x - 1]!;
-      if ((east === 0 || east === 1) && dry(west)) {
-        const d = depth(x, y, 1);
-        if (d !== null) {
-          active += d;
-          activeN += 1;
-        }
-      }
-      if ((west === 0 || west === 1) && dry(east)) {
-        const d = depth(x, y, -1);
-        if (d !== null) {
-          passive += d;
-          passiveN += 1;
-        }
-      }
-    }
-  }
-  assert.ok(activeN > 3 && passiveN > 3, `coasts a ${activeN} p ${passiveN}`);
-  assert.ok(active / activeN <= 2, `gap shelf ${active / activeN}`);
-  assert.ok(passive / passiveN >= 3, `outer shelf ${passive / passiveN}`);
-  assert.ok(passive / passiveN > active / activeN + 1, `outer ${passive / passiveN} gap ${active / activeN}`);
-});
-
 test("mountains at 0 has no long range and mountains at 100 keeps the peak cap", () => {
   const flat = generateTerrain("inkunzi", 46, { ...LAYOUT_RECIPES.earthlike, mountains: 0, layout: "earthlike", level: "standard" });
   assert.ok(longestRange(flat) < 24, `flat range ${longestRange(flat)}`);
@@ -659,13 +560,14 @@ test("no single cover sheets the land", () => {
   const world = generateTerrain("inkunzi", 46);
   const counts = new Map<number, number>();
   let land = 0;
-  for (const id of world.terrain) {
+  for (let i = 0; i < world.cover.length; i++) {
+    const id = world.cover[i]!;
     if (id === 0 || id === 1 || id === 16) continue;
     land += 1;
     counts.set(id, (counts.get(id) ?? 0) + 1);
   }
   for (const [id, n] of counts) {
-    assert.ok(n / land <= 0.55, `cover ${id} sheets ${n}/${land}`);
+    assert.ok(n / land <= 0.4, `cover ${id} sheets ${n}/${land}`);
   }
   for (const id of [2, 3, 7, 8, 11, 12, 13]) {
     assert.ok((counts.get(id) ?? 0) > 30, `cover ${id} ${(counts.get(id) ?? 0)}`);
@@ -755,4 +657,127 @@ test("islands layout is many bodies and pangaea stays one", () => {
   assert.ok(isleBodies.length >= 6, `islands bodies ${isleBodies.length}`);
   assert.equal(panBodies.length, 1, `pangaea bodies ${panBodies.length}`);
 });
+
+test("desert river keeps both layers and forest can stand on a ridge", () => {
+  const seeds = ["inkunzi", "inkunzi-dry", "vestoria", "river-desert", "stack"];
+  let hit = false;
+  for (const seed of seeds) {
+    const world = generateTerrain(seed, 46);
+    for (let i = 0; i < world.cover.length; i++) {
+      const cover = world.cover[i]!;
+      if ((cover === 8 || cover === 11) && world.water[i] === 1) {
+        const tags = effects(cellStack(world, i)).tags;
+        const arid = tags.includes("desert") || tags.includes("arid") || tags.includes("steppe");
+        assert.ok(arid && tags.includes("river"), tags.join(","));
+        assert.notEqual(cover, 9);
+        hit = true;
+        break;
+      }
+    }
+    if (hit) break;
+  }
+  assert.ok(hit, "no desert or steppe channel");
+  const world = generateTerrain("inkunzi", 46);
+  let forestRidge = 0;
+  for (let i = 0; i < world.cover.length; i++) {
+    const c = world.cover[i]!;
+    if ((c === 3 || c === 13 || c === 14) && (world.relief[i] ?? 0) >= 3) forestRidge += 1;
+  }
+  assert.ok(forestRidge > 0, "no forest on a hill or range");
+});
+
+test("rivers are incised and lakes sit in basins", () => {
+  const world = generateTerrain("inkunzi", 46);
+  let ch = 0;
+  let chH = 0;
+  let nb = 0;
+  let nbH = 0;
+  const { cols, rows, height, water, cover } = world;
+  for (let i = 0; i < water.length; i++) {
+    if (water[i] !== 1) continue;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    ch += 1;
+    chH += height[i]!;
+    assert.notEqual(cover[i], 9);
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+    ] as const) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      const xx = (x + dx + cols) % cols;
+      const j = yy * cols + xx;
+      if (water[j] === 1) continue;
+      if (cover[j] === 0 || cover[j] === 1 || cover[j] === 16) continue;
+      nb += 1;
+      nbH += height[j]!;
+    }
+  }
+  assert.ok(ch > 10, `channels ${ch}`);
+  assert.ok(nb > 0);
+  assert.ok(chH / ch < nbH / nb, `channel ${chH / ch} neighbors ${nbH / nb}`);
+  let lakes = 0;
+  for (let i = 0; i < water.length; i++) if (water[i] === 3) lakes += 1;
+  assert.ok(lakes > 0, "no lakes");
+  for (let i = 0; i < water.length; i++) {
+    if (water[i] !== 3) continue;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      const xx = (x + dx + cols) % cols;
+      const j = yy * cols + xx;
+      if (water[j] === 3) continue;
+      assert.ok(height[i]! <= height[j]!, `lake not a basin ${height[i]} vs ${height[j]}`);
+    }
+  }
+});
+
+test("earthlike landmasses are mixed sizes and not a mirror pair", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const bodies = landBodies(world, 12).sort((a, b) => b.n - a.n);
+  assert.ok(bodies.some((b) => b.n >= 80), `no large body ${bodies.map((b) => b.n).join(",")}`);
+  assert.ok(bodies.filter((b) => b.n >= 12).length >= 2, `bodies ${bodies.length}`);
+});
+
+test("under is not a surface silhouette and weather is deterministic", () => {
+  const world = generateTerrain("inkunzi", 46);
+  let n = world.under.length;
+  let landN = 0;
+  let openN = 0;
+  let both = 0;
+  for (let i = 0; i < n; i++) {
+    const land = world.cover[i] !== 0 && world.cover[i] !== 1 && world.cover[i] !== 16;
+    const open = world.under[i] === 1 || world.under[i] === 2;
+    if (land) landN += 1;
+    if (open) openN += 1;
+    if (land && open) both += 1;
+  }
+  const pl = landN / n;
+  const po = openN / n;
+  const pboth = both / n;
+  const corr = (pboth - pl * po) / Math.sqrt(Math.max(1e-9, pl * (1 - pl) * po * (1 - po)));
+  assert.ok(corr < 0.55, `under corr ${corr}`);
+  const a = unpackTerrain(packTerrain(world))!;
+  const b = unpackTerrain(packTerrain(world))!;
+  applyWeather(a);
+  applyWeather(b);
+  let mismatch = 0;
+  for (let i = 0; i < a.moist.length; i += 10) if (a.moist[i] !== b.moist[i]) mismatch += 1;
+  assert.equal(mismatch, 0);
+});
+
 
