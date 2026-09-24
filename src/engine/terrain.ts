@@ -299,9 +299,11 @@ function cylinder(noise: (x: number, y: number) => number, ang: number, ny: numb
 function coverOf(land: boolean, temp: number, moist: number, relief: number, ny: number, jag: number, cap = 0.5): number {
   if (!land) {
     const pole = Math.min(ny, 1 - ny);
-    const edge = 0.014 + cap * 0.092 + (jag - 0.5) * 0.042;
-    if (pole < 0.008) return jag > 0.58 ? 0 : 16;
-    if (pole < edge && jag < 0.84) return 16;
+    if (pole > 0.05) return 0;
+    const lobe = Math.sin(cap * 17 + jag * 8) > -0.2;
+    if (!lobe) return 0;
+    if (pole < 0.016) return jag > 0.74 ? 0 : 16;
+    if (pole < 0.046 && jag < 0.82) return 16;
     return 0;
   }
   if (relief === R_ICE) return 6;
@@ -406,15 +408,18 @@ function neighborVote(plate: Int16Array, x: number, y: number, wc: number, wr: n
   return { oceanN, landN, vote };
 }
 
-function paintNamedBelts(chewed: Int16Array, wc: number, wr: number): Float32Array {
+function paintNamedBelts(chewed: Int16Array, wc: number, wr: number, layout: WorldLayout = "earthlike"): Float32Array {
   const belt = new Float32Array(wc * wr);
   const pass = new Uint8Array(wc * wr);
+  if (layout === "archipelago" || layout === "islands") return belt;
+  const split = layout === "earthlike";
   const midLat = (y: number) => {
     if (y < 0 || y >= wr) return false;
     const ny = (y + 0.5) / wr;
     return Math.min(ny, 1 - ny) >= 0.1;
   };
   const inHemi = (x: number, hemi: "ow" | "nw") => {
+    if (!split) return true;
     const nx = x / wc;
     return hemi === "ow" ? nx >= 0.02 && nx <= 0.5 : nx >= 0.58 && nx <= 0.98;
   };
@@ -467,11 +472,11 @@ function paintNamedBelts(chewed: Int16Array, wc: number, wr: number): Float32Arr
   };
 
   const stamp = (x: number, y: number, hemi: "ow" | "nw", asPass: boolean, t = 0.5) => {
-    const waist = asPass ? 1 : 0.82 + Math.sin(Math.PI * Math.min(1, Math.max(0, t))) * 0.28;
-    const spineR = 1.35 * waist;
-    const rangeR = 5.6 * waist;
-    const hillR = 8.2 * waist;
-    const r = Math.ceil(asPass ? 3.4 : hillR);
+    const waist = asPass ? 1 : 0.62 + Math.sin(Math.PI * Math.min(1, Math.max(0, t))) * 0.32;
+    const spineR = 1.05 * waist;
+    const rangeR = 3.2 * waist;
+    const hillR = 5.1 * waist;
+    const r = Math.ceil(asPass ? 2.4 : hillR);
     for (let dy = -r; dy <= r; dy++) {
       const yy = y + dy;
       if (yy < 0 || yy >= wr || !midLat(yy)) continue;
@@ -482,7 +487,7 @@ function paintNamedBelts(chewed: Int16Array, wc: number, wr: number): Float32Arr
         const d = Math.hypot(dx, dy);
         const j = yy * wc + xx;
         if (asPass) {
-          if (d <= 3.4) pass[j] = 1;
+          if (d <= 2.4) pass[j] = 1;
           if (belt[j]! < 0.38) belt[j] = 0.38;
           continue;
         }
@@ -541,7 +546,7 @@ function paintNamedBelts(chewed: Int16Array, wc: number, wr: number): Float32Arr
     }
   }
 
-  const neu = bbox("nw");
+  const neu = split ? bbox("nw") : null;
   if (neu) {
     for (let y = neu.minY; y <= neu.maxY; y++) {
       if (!midLat(y)) continue;
@@ -807,20 +812,9 @@ function raiseCrust(
       }
     }
   } else if (layout === "pangaea") {
-    const x = 0.3 + rand() * 0.1;
-    const y = 0.4 + rand() * 0.08;
-    mass(x, y, 118 + rand() * 28, 68 + rand() * 8, 0, true);
-    mass(Math.min(0.78, x + 0.18 + rand() * 0.06), y - 0.04 + rand() * 0.1, 78 + rand() * 18, 44, 0, true);
-    if (placed.length >= 2) {
-      necks.push({
-        ax: placed[0]!.x,
-        ay: placed[0]!.y,
-        bx: placed[1]!.x,
-        by: placed[1]!.y,
-        id: 0,
-        rad: 16 + rand() * 8,
-      });
-    }
+    const x = 0.38 + rand() * 0.08;
+    const y = 0.46 + rand() * 0.06;
+    mass(x, y, 132 + rand() * 22, 72 + rand() * 10, 0, true);
   } else if (layout === "continents") {
     let n = 4;
     if (breakupN >= 68) n = 5;
@@ -878,6 +872,7 @@ function raiseCrust(
   for (let y = 0; y < wr; y++) {
     const ny = (y + 0.5) / wr;
     const pole = Math.min(ny, 1 - ny);
+    const latCos = Math.max(0.28, Math.cos((ny - 0.5) * Math.PI));
     for (let x = 0; x < wc; x++) {
       const i = y * wc + x;
       const ang = (x / wc) * Math.PI * 2;
@@ -894,6 +889,7 @@ function raiseCrust(
           if (dx > wc * 0.5) dx -= wc;
           else if (dx < -wc * 0.5) dx += wc;
         }
+        if (!lobe.polar) dx /= latCos;
         const dy = y + 0.5 - lobe.y;
         const along = dx * lobe.vx + dy * lobe.vy;
         const cross = -dx * lobe.vy + dy * lobe.vx;
@@ -1050,7 +1046,7 @@ function raiseCrust(
   }
   if (layout === "earthlike" && job) sprinkleCrumbs(chewed, wc, wr, job.crumbRand, breakupN >= 68);
 
-  const beltC = paintNamedBelts(chewed, wc, wr);
+  const beltC = paintNamedBelts(chewed, wc, wr, layout);
   const drift: PlateDrift[] = [];
 
   const out = new Int16Array(cols * rows).fill(-1);
@@ -1375,10 +1371,11 @@ export function generateTerrain(seed: string, sea = 46, extra?: WorldGenInput): 
       moistA[i] = byte(moistF[i]! * 255);
       let rel = reliefOf(land, height[i]!, shelf);
       const pole = Math.min(ny, 1 - ny);
-      if (land && pole < 0.055) rel = R_ICE;
+      const cap = cylinder(elevN, (x / cols) * Math.PI * 2, 0.08, 0.62, 2);
+      if (land && pole < 0.04 && cap > 0.42) rel = R_ICE;
+      else if (land && pole < 0.055 && cap > 0.62) rel = R_ICE;
       else if (land && tempF[i]! < 0.12 && rel >= R_RANGE && rel <= R_PEAK) rel = R_ICE;
       relief[i] = rel;
-      const cap = cylinder(elevN, (x / cols) * Math.PI * 2, 0.08, 0.62, 2);
       let id = coverOf(land, tempF[i]!, moistF[i]!, rel, ny, jag[i]!, cap);
       if (shelf && id !== 16) id = 1;
       terrain[i] = id;
@@ -1515,7 +1512,7 @@ function stampRises(
     const y = (best / cols) | 0;
     const x = best - y * cols;
     if (rises.some((r) => Math.hypot(r.x - x, r.y - y) < 16)) return;
-    const rad = 13;
+    const rad = 5;
     rises.push({ x, y, kind, rad });
     for (let dy = -rad; dy <= rad; dy++) {
       for (let dx = -rad; dx <= rad; dx++) {
@@ -1554,7 +1551,7 @@ function stampRises(
     if (best < 0) return;
     const y = (best / cols) | 0;
     const x = best - y * cols;
-    const rad = 16;
+    const rad = 6;
     for (let dy = -rad; dy <= rad; dy++) {
       for (let dx = -rad; dx <= rad; dx++) {
         if (dx * dx + dy * dy > rad * rad) continue;
@@ -2076,13 +2073,14 @@ function nibbleIce(terrain: Uint8Array, cols: number, rows: number, jag: Float32
   for (let y = 0; y < rows; y++) {
     const ny = (y + 0.5) / rows;
     const pole = Math.min(ny, 1 - ny);
-    if (pole > 0.09) continue;
+    if (pole > 0.08) continue;
     for (let x = 0; x < cols; x++) {
       const i = y * cols + x;
       const id = terrain[i]!;
       if (id !== 6 && id !== 16) continue;
-      const wedge = Math.sin((x / cols) * Math.PI * 5) > 0.78;
-      if (wedge || jag[i]! > 0.86) terrain[i] = id === 6 ? 15 : 0;
+      const wedge = Math.sin((x / cols) * Math.PI * 7 + jag[i]! * 6) > 0.62;
+      if (id === 16 && (wedge || jag[i]! > 0.78)) terrain[i] = 0;
+      else if (id === 6 && wedge && jag[i]! > 0.9) terrain[i] = 15;
     }
   }
 }

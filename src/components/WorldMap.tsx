@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, Fragment } from "react";
+import { createPortal } from "react-dom";
 import {
   MapContainer,
   CircleMarker,
@@ -32,6 +33,7 @@ import { distance, enemyBlockers, setMapWrap, stackedWith, stackOffsets, stopFor
 import { armyStrength, armiesInContact, isGhost } from "@/engine/battle";
 import { TERRAINS, TERRAIN_DRAW_SCALE, cellBrief, renderTerrain, seenWindow, type GroundDraw, type TerrainField } from "@/engine/terrain";
 import {
+  getTerrainPreview,
   paintBorder,
   paintGround,
   paintSight,
@@ -213,34 +215,116 @@ function WrapCamera({ mapWidth, enabled }: { mapWidth: number; enabled: boolean 
       jumping = false;
     };
     map.on("move", onMove);
+    map.on("moveend", onMove);
     return () => {
       map.off("move", onMove);
+      map.off("moveend", onMove);
     };
   }, [map, mapWidth, enabled]);
   return null;
 }
 
-function OneWidth({ mapWidth, enabled }: { mapWidth: number; enabled: boolean }) {
+function WorldZoom({ mapWidth, mapHeight }: { mapWidth: number; mapHeight: number }) {
   const map = useMap();
   useEffect(() => {
-    if (!enabled || mapWidth <= 0) {
-      map.setMinZoom(-3);
-      return;
-    }
     const apply = () => {
-      const w = Math.max(1, map.getSize().x);
-      const floor = Math.log2(w / mapWidth) + 0.06;
+      const size = map.getSize();
+      const byW = Math.log2(Math.max(1, size.x) / Math.max(1, mapWidth));
+      const byH = Math.log2(Math.max(1, size.y - 28) / Math.max(1, mapHeight));
+      const floor = Math.max(-6, Math.min(byW, byH) - 0.08);
       map.setMinZoom(floor);
-      if (map.getZoom() < floor - 0.001) map.setZoom(floor, { animate: false });
     };
     apply();
     map.on("resize", apply);
     return () => {
       map.off("resize", apply);
-      map.setMinZoom(-3);
+      map.setMinZoom(-6);
     };
-  }, [map, mapWidth, enabled]);
+  }, [map, mapWidth, mapHeight]);
   return null;
+}
+
+function MiniMap({
+  mapWidth,
+  mapHeight,
+  wrapped,
+  fieldRev,
+}: {
+  mapWidth: number;
+  mapHeight: number;
+  wrapped: boolean;
+  fieldRev: number;
+}) {
+  const map = useMap();
+  const [src, setSrc] = useState("");
+  const [box, setBox] = useState({ x: 0, y: 0, w: 1, h: 1 });
+  const [host, setHost] = useState<Element | null>(null);
+  useEffect(() => {
+    setHost(document.querySelector(".ink-mapwell"));
+  }, []);
+  useEffect(() => {
+    const tick = window.setTimeout(() => setSrc(getTerrainPreview()), 40);
+    return () => window.clearTimeout(tick);
+  }, [fieldRev]);
+  useEffect(() => {
+    const apply = () => {
+      const b = map.getBounds();
+      const wrapX = (v: number) => {
+        if (!wrapped || mapWidth <= 0) return v;
+        let n = v % mapWidth;
+        if (n < 0) n += mapWidth;
+        return n;
+      };
+      const x0 = wrapX(b.getWest());
+      const x1 = wrapX(b.getEast());
+      const y0 = Math.min(mapHeight, Math.max(0, b.getNorth()));
+      const y1 = Math.min(mapHeight, Math.max(0, b.getSouth()));
+      const top = 1 - y0 / mapHeight;
+      const bot = 1 - y1 / mapHeight;
+      const span = (b.getEast() - b.getWest()) / mapWidth;
+      if (span >= 0.98) {
+        setBox({ x: 0, y: Math.min(top, bot), w: 1, h: Math.abs(bot - top) });
+        return;
+      }
+      setBox({
+        x: x0 / mapWidth,
+        y: Math.min(top, bot),
+        w: x1 > x0 ? (x1 - x0) / mapWidth : 1 - x0 / mapWidth + x1 / mapWidth,
+        h: Math.abs(bot - top),
+      });
+    };
+    apply();
+    map.on("move zoom resize", apply);
+    return () => {
+      map.off("move zoom resize", apply);
+    };
+  }, [map, mapWidth, mapHeight, wrapped]);
+  if (!host) return null;
+  return createPortal(
+    <button
+      type="button"
+      className="ink-minimap"
+      aria-label="Minimap"
+      onClick={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / Math.max(1, rect.width);
+        const ny = (e.clientY - rect.top) / Math.max(1, rect.height);
+        map.setView([mapHeight * (1 - ny), nx * mapWidth], map.getZoom(), { animate: false });
+      }}
+    >
+      {src ? <img src={src} alt="" /> : <span className="ink-minimap-void" />}
+      <i
+        className="ink-minimap-view"
+        style={{
+          left: `${box.x * 100}%`,
+          top: `${box.y * 100}%`,
+          width: `${Math.max(4, box.w * 100)}%`,
+          height: `${Math.max(4, box.h * 100)}%`,
+        }}
+      />
+    </button>,
+    host,
+  );
 }
 
 function GroundLayer({
@@ -357,7 +441,7 @@ function MapPointer({
   onPickStack: (ids: string[]) => void;
   onClearPin: () => void;
   onPaint: ((x: number, y: number) => void) | null;
-  onHover: (x: number, y: number) => void;
+  onHover: (x: number, y: number, client?: { x: number; y: number }) => void;
   wrapWidth: number;
 }) {
   const painting = useRef(false);
@@ -378,10 +462,14 @@ function MapPointer({
     mouseup() {
       painting.current = false;
     },
+    mouseout() {
+      onHover(-1, -1);
+    },
     mousemove(e) {
       const y = e.latlng.lat;
       const x = wrapLng(e.latlng.lng, wrapWidth);
-      onHover(x, y);
+      const oe = e.originalEvent as MouseEvent | undefined;
+      onHover(x, y, oe ? { x: oe.clientX, y: oe.clientY } : undefined);
       if (painting.current && onPaint) {
         onPaint(x, y);
         return;
@@ -508,6 +596,7 @@ export default function WorldMap({
   const [collapsed, setCollapsed] = useState(false);
   const [keyOpen, setKeyOpen] = useState(false);
   const [hover, setHover] = useState("");
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const { field, rev } = useTerrainField();
   const colorById = useMemo(() => new Map(nations.map((n) => [n.id, n.color])), [nations]);
   const offsets = useMemo(() => stackOffsets(armies), [armies]);
@@ -572,7 +661,11 @@ export default function WorldMap({
       : null;
 
   return (
-    <div className="relative h-full w-full">
+    <div className="ink-mapstage">
+      <div className="ink-rail ink-rail-n" aria-hidden>
+        <span>INKUNZI</span>
+      </div>
+      <div className="ink-mapwell">
       {keyOpen && layer === "terrain" && (
         <div className="ink-legend" aria-hidden>
           {TERRAINS.map((t) => (
@@ -615,7 +708,14 @@ export default function WorldMap({
           ))}
         </div>
       )}
-      {hover && <div className="ink-cellread">{hover}</div>}
+      {hover && (
+        <div
+          className="ink-cellread"
+          style={hoverPos ? { left: hoverPos.x, top: hoverPos.y, bottom: "auto", transform: "none" } : undefined}
+        >
+          {hover}
+        </div>
+      )}
       <div className="ink-planes" role="tablist" aria-label="Plane">
         {MAP_PLANES.map((p) => (
           <button
@@ -673,7 +773,7 @@ export default function WorldMap({
         crs={CRS.Simple}
         bounds={BOUNDS}
         maxBounds={VIEW_BOUNDS}
-        maxBoundsViscosity={1}
+        maxBoundsViscosity={0.55}
         minZoom={-6}
         maxZoom={3}
         zoomSnap={0}
@@ -707,7 +807,8 @@ export default function WorldMap({
           field={field}
         />
         <WrapCamera mapWidth={mapWidth} enabled={wrapped} />
-        <OneWidth mapWidth={mapWidth} enabled={wrapped} />
+        <WorldZoom mapWidth={mapWidth} mapHeight={mapHeight} />
+        {field && <MiniMap mapWidth={mapWidth} mapHeight={mapHeight} wrapped={wrapped} fieldRev={rev} />}
         <DragGate locked={drawing} />
         <MapPointer
           tool={tool}
@@ -724,7 +825,19 @@ export default function WorldMap({
           onClearPin={() => setPin(null)}
           onPaint={onPaint}
           wrapWidth={wrapped ? mapWidth : 0}
-          onHover={(x, y) => setHover(groundLine(x, y))}
+          onHover={(x, y, client) => {
+            if (x < 0) {
+              setHover("");
+              setHoverPos(null);
+              return;
+            }
+            setHover(groundLine(x, y));
+            if (client) {
+              const well = document.querySelector(".ink-mapwell");
+              const rect = well?.getBoundingClientRect();
+              if (rect) setHoverPos({ x: client.x - rect.left + 14, y: client.y - rect.top + 16 });
+            }
+          }}
         />
         {shifts.map((shift) => (
           <Fragment key={shift}>
@@ -1011,6 +1124,10 @@ export default function WorldMap({
           )}
         </aside>
       )}
+      </div>
+      <div className="ink-rail ink-rail-s" aria-hidden>
+        <span>THE TABLE</span>
+      </div>
     </div>
   );
 }

@@ -604,3 +604,47 @@ test("a pack keeps layout, seen, and height and a file load does not generate", 
   assert.equal(loaded!.seen[world.hearths[0]!.y * world.cols + world.hearths[0]!.x], world.seen[world.hearths[0]!.y * world.cols + world.hearths[0]!.x]);
 });
 
+test("pangaea does not paint a second full-height mountain wall", () => {
+  const world = generateTerrain("inkunzi-pangaea", LAYOUT_RECIPES.pangaea.sea, {
+    ...LAYOUT_RECIPES.pangaea,
+    layout: "pangaea",
+    level: "standard",
+  });
+  const { cols, rows, relief, terrain } = world;
+  const land = (id: number) => id !== 0 && id !== 1 && id !== 16;
+  let tall = 0;
+  for (let x = 0; x < cols; x++) {
+    let n = 0;
+    let rowsLand = 0;
+    for (let y = Math.floor(rows * 0.18); y < rows * 0.82; y++) {
+      const i = y * cols + x;
+      if (!land(terrain[i]!)) continue;
+      rowsLand += 1;
+      if (relief[i] === 4 || relief[i] === 5) n += 1;
+    }
+    if (rowsLand > 20 && n / rowsLand > 0.55) tall += 1;
+  }
+  assert.ok(tall < 6, `pangaea stroke columns ${tall}`);
+});
+
+test("polar mid-ocean row is not an ice bar", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const y = Math.max(1, Math.floor(world.rows * 0.04));
+  let ice = 0;
+  let ocean = 0;
+  for (let x = 0; x < world.cols; x++) {
+    const id = world.terrain[y * world.cols + x]!;
+    if (id === 6 || id === 16) ice += 1;
+    if (id === 0) ocean += 1;
+  }
+  assert.ok(ocean > world.cols * 0.12, `open polar water ${ocean}`);
+  assert.ok(ice < world.cols * 0.9, `ice bar ${ice}`);
+});
+
+test("earthlike wraps and theater does not", () => {
+  const planet = generateTerrain("inkunzi", 46, { ...LAYOUT_RECIPES.earthlike, layout: "earthlike", wrap: true });
+  const theater = generateTerrain("inkunzi", 46, { ...LAYOUT_RECIPES.theater, layout: "theater", wrap: false });
+  assert.equal(planet.wrap, true);
+  assert.equal(theater.wrap, false);
+});
+
