@@ -20,6 +20,9 @@ export default function TopBar({
   onQueue,
   onExport,
   onImport,
+  outlinerOpen,
+  onOutliner,
+  onAtlas,
 }: {
   session: Session;
   staffLive: boolean;
@@ -34,6 +37,9 @@ export default function TopBar({
   onQueue: () => void;
   onExport: () => void;
   onImport: (file: File) => void;
+  outlinerOpen: boolean;
+  onOutliner: () => void;
+  onAtlas: () => void;
 }) {
   const age = ageById(session.ageId);
 
@@ -58,6 +64,9 @@ export default function TopBar({
 
       <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
         <p className="hidden max-w-xs truncate text-[11px] text-muted xl:block">{log}</p>
+        <Button onClick={onOutliner} aria-pressed={outlinerOpen}>
+          Outliner
+        </Button>
         <label className="flex min-h-9 items-center gap-2 rounded-sm border border-border bg-raised px-2 text-xs">
           <input
             type="checkbox"
@@ -66,52 +75,59 @@ export default function TopBar({
           />
           Staff
         </label>
-        <div className="flex overflow-hidden rounded-sm border border-gold-dim" role="group" aria-label="Table mode">
-          <button
-            type="button"
-            aria-pressed={tableMode === "peace"}
-            className={cn(
-              "min-h-9 px-3 text-sm",
-              tableMode === "peace" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
-            )}
-            onClick={() => onTableMode("peace")}
-          >
-            Peace
-          </button>
-          <button
-            type="button"
-            aria-pressed={tableMode === "friday"}
-            className={cn(
-              "min-h-9 px-3 text-sm",
-              tableMode === "friday" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
-            )}
-            onClick={() => onTableMode("friday")}
-          >
-            Friday{openWars ? ` ${openWars}` : ""}
-          </button>
-        </div>
-        <Button variant="staff" onClick={onSaturday}>
-          Saturday
-        </Button>
-        <div className="hidden items-center gap-1.5 md:flex">
-          <Button onClick={onQueue}>Queue</Button>
-          <Button onClick={onDay}>+Day</Button>
-          <Button onClick={onClock}>Clock</Button>
-          <Button onClick={onExport}>Export</Button>
-          <label className="inline-flex min-h-9 cursor-pointer items-center rounded-sm border border-border bg-raised px-3 text-sm">
-            Import
-            <input
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) onImport(file);
-                e.target.value = "";
-              }}
-            />
-          </label>
-        </div>
+        {staffLive && (
+          <>
+            <Button variant="gold" onClick={onAtlas}>
+              Atlas
+            </Button>
+            <div className="flex overflow-hidden rounded-sm border border-gold-dim" role="group" aria-label="Staff clock">
+              <button
+                type="button"
+                aria-pressed={tableMode === "peace"}
+                className={cn(
+                  "min-h-9 px-3 text-sm",
+                  tableMode === "peace" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
+                )}
+                onClick={() => onTableMode("peace")}
+              >
+                RP week
+              </button>
+              <button
+                type="button"
+                aria-pressed={tableMode === "friday"}
+                className={cn(
+                  "min-h-9 px-3 text-sm",
+                  tableMode === "friday" ? "bg-raised text-gold" : "bg-bg text-muted hover:bg-hover",
+                )}
+                onClick={() => onTableMode("friday")}
+              >
+                War day{openWars ? ` ${openWars}` : ""}
+              </button>
+            </div>
+            <Button variant="staff" onClick={onSaturday}>
+              Tick day
+            </Button>
+            <div className="hidden items-center gap-1.5 md:flex">
+              <Button onClick={onDay}>+Day</Button>
+              <Button onClick={onClock}>Clock</Button>
+              <Button onClick={onExport}>Export</Button>
+              <label className="inline-flex min-h-9 cursor-pointer items-center rounded-sm border border-border bg-raised px-3 text-sm">
+                Import
+                <input
+                  type="file"
+                  accept="application/json"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) onImport(file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          </>
+        )}
+        <Button onClick={onQueue}>Letters</Button>
       </div>
     </header>
   );

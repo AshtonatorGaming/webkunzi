@@ -11,6 +11,7 @@ import {
   firstContact,
   gradeBattle,
   isGhost,
+  playOutReel,
   reportHeadline,
   resolveBattle,
   resolveFieldBattle,
@@ -37,6 +38,21 @@ test("phase weights are Mounted/Ranged/Melee by Shock/Early/Late", () => {
   assert.equal(PHASE_WEIGHTS.late.shock, 0.7);
   assert.equal(PHASE_WEIGHTS.late.ranged, 0.8);
   assert.equal(PHASE_WEIGHTS.late.melee, 1.3);
+});
+
+test("playOut runs the rest of the reel without rewriting lines", () => {
+  const heavy = army("a", "vestoria", 36, { composition: { shock: 12, ranged: 12, melee: 12 } });
+  const light = army("b", "tunnu", 33, { composition: { shock: 11, ranged: 11, melee: 11 } });
+  const reel = startReel({ attackers: [heavy], defenders: [light] });
+  const done = playOutReel(reel);
+  const full = resolveFieldBattle(heavy, light, "open");
+  assert.equal(done.done, true);
+  assert.equal(done.phases.length, full.report.phases.length);
+  assert.deepEqual(
+    done.phases.map((p) => p.id),
+    full.report.phases.map((p) => p.id),
+  );
+  assert.equal(Math.round(armyStrength(done.attackers[0]!)), Math.round(full.attacker.strength));
 });
 
 test("stronger shock army takes shock, ranged takes early", () => {

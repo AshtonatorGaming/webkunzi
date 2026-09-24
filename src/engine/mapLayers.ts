@@ -1,4 +1,9 @@
+export type MapPlane = "surface" | "under" | "sky";
+
 export type MapLayer =
+  | "terrain"
+  | "climate"
+  | "height"
   | "all"
   | "political"
   | "culture"
@@ -6,7 +11,16 @@ export type MapLayer =
   | "resources"
   | "military";
 
+export const MAP_PLANES: { id: MapPlane; label: string }[] = [
+  { id: "surface", label: "Surface" },
+  { id: "under", label: "Under" },
+  { id: "sky", label: "Sky" },
+];
+
 export const MAP_LAYERS: { id: MapLayer; label: string; short: string }[] = [
+  { id: "terrain", label: "Terrain", short: "GEO" },
+  { id: "climate", label: "Climate", short: "CLM" },
+  { id: "height", label: "Height", short: "HGT" },
   { id: "all", label: "All", short: "ALL" },
   { id: "political", label: "Political", short: "POL" },
   { id: "culture", label: "Culture", short: "CUL" },

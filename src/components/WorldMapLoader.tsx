@@ -10,6 +10,7 @@ type Props = {
   selectedArmyId: string | null;
   marchingArmyId: string | null;
   staffLive: boolean;
+  atWarNationIds?: string[];
   pops: Pop[];
   nodes: ResourceNode[];
   armies: Army[];
@@ -37,7 +38,7 @@ function PaintingFallback() {
     <div className="grid h-full place-items-center bg-map text-muted">
       <div className="text-center">
         <p className="font-display tracking-[0.18em] text-gold">INKUNZI</p>
-        <p className="mt-2 text-sm">Unrolling the painting…</p>
+        <p className="mt-2 text-sm">Raising the ground…</p>
       </div>
     </div>
   );

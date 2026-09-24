@@ -701,6 +701,31 @@ export function closeReel(
   return { armies: next, report };
 }
 
+export function playOutReel(reel: BattleReel): BattleReel {
+  let current: BattleReel = { ...reel, frozen: false };
+  while (!current.done) {
+    const nextId = BATTLE_PHASES[current.index + 1];
+    if (!nextId) return { ...current, done: true };
+    const step = runPhase(nextId, current.attackers, current.defenders, current.terrain);
+    current = packReel({
+      index: current.index + 1,
+      leftoverAtk: current.leftoverAtk,
+      leftoverDef: current.leftoverDef,
+      occupyX: current.occupyX,
+      occupyY: current.occupyY,
+      atk: step.atk,
+      def: step.def,
+      fielded: current.fielded,
+      terrain: current.terrain,
+      attackerTags: current.attackerTags,
+      defenderTags: current.defenderTags,
+      phases: [...current.phases, step.result],
+      done: step.wipe || nextId === "late",
+    });
+  }
+  return current;
+}
+
 export function continueReel(
   reel: BattleReel,
   armies: Army[],

@@ -18,6 +18,7 @@ export default function Outliner({
   onOpenNation,
   onOpenCharacter,
   onSelectArmy,
+  staffLive = false,
 }: {
   nations: Nation[];
   pops: Pop[];
@@ -30,6 +31,7 @@ export default function Outliner({
   onOpenNation: (id: string) => void;
   onOpenCharacter: (id: string) => void;
   onSelectArmy: (id: string) => void;
+  staffLive?: boolean;
 }) {
   const counts = countPopsByOwner(pops);
   const [name, setName] = useState("");
@@ -38,6 +40,7 @@ export default function Outliner({
   return (
     <aside className="ink-scroll h-full w-full overflow-y-auto bg-surface p-3 text-fg">
       <h2 className="mb-2 font-display text-xs tracking-[0.16em] text-gold">OUTLINER</h2>
+      {staffLive && (
       <form
         className="mb-3 flex gap-1"
         onSubmit={(e) => {
@@ -57,6 +60,7 @@ export default function Outliner({
           Add
         </Button>
       </form>
+      )}
       <ul className="space-y-1">
         {nations
           .filter((n) => n.id !== "unclaimed")
@@ -110,7 +114,7 @@ export default function Outliner({
       </ul>
       {open.length > 0 && (
         <div className="mt-4">
-          <h3 className="mb-1 text-[11px] tracking-[0.14em] text-gold">FRIDAY</h3>
+          <h3 className="mb-1 text-[11px] tracking-[0.14em] text-gold">AT WAR</h3>
           <ul className="space-y-1 text-xs text-muted">
             {open.map((w) => (
               <li key={w.id}>{w.title}</li>

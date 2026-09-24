@@ -16,7 +16,7 @@ var grokOgIdentity = { "site": {
 	"type": "x:game",
 	"card": "custom",
 	"color": "0e0c0a",
-	"description": "Staffed table. Friday is war.",
+	"description": "Staffed table. War day is the fight.",
 	"image": "/og.jpg",
 	"banner": "/x-banner.jpg"
 } };

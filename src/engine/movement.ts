@@ -10,8 +10,35 @@ export function turnMarchRange(session: Session): number {
   return session.pixelsPerDayMarch * session.daysPerTurn;
 }
 
+let wrapSpan = 0;
+
+export function setMapWrap(width: number) {
+  wrapSpan = width > 0 ? width : 0;
+}
+
+export function wrapCoord(x: number): number {
+  if (wrapSpan <= 0) return x;
+  let v = x % wrapSpan;
+  if (v < 0) v += wrapSpan;
+  return v;
+}
+
+function shortestX(fromX: number, toX: number): number {
+  if (wrapSpan <= 0) return toX;
+  let x = toX;
+  const dx = x - fromX;
+  if (dx > wrapSpan / 2) x -= wrapSpan;
+  else if (dx < -wrapSpan / 2) x += wrapSpan;
+  return x;
+}
+
 export function distance(x1: number, y1: number, x2: number, y2: number): number {
-  return Math.hypot(x2 - x1, y2 - y1);
+  let dx = x2 - x1;
+  if (wrapSpan > 0) {
+    if (dx > wrapSpan / 2) dx -= wrapSpan;
+    else if (dx < -wrapSpan / 2) dx += wrapSpan;
+  }
+  return Math.hypot(dx, y2 - y1);
 }
 
 function firstCircleHit(
@@ -70,23 +97,27 @@ export function stopForZoc(
   blockers: Army[],
   radius = ZOC_PX,
 ): { x: number; y: number; blockerId: string | null } {
+  const destX = shortestX(fromX, toX);
   let best: { x: number; y: number; blockerId: string | null; t: number } = {
-    x: toX,
+    x: destX,
     y: toY,
     blockerId: null,
     t: 2,
   };
 
   for (const b of blockers) {
-    const startInside = distance(fromX, fromY, b.x, b.y) <= radius;
-    const endInside = distance(toX, toY, b.x, b.y) <= radius;
-    if (startInside || endInside) continue;
-    const hit = firstCircleHit(fromX, fromY, toX, toY, b.x, b.y, radius);
-    if (!hit || hit.t >= best.t) continue;
-    best = { x: hit.x, y: hit.y, blockerId: b.id, t: hit.t };
+    const xs = wrapSpan > 0 ? [b.x - wrapSpan, b.x, b.x + wrapSpan] : [b.x];
+    for (const bx of xs) {
+      const startInside = distance(fromX, fromY, bx, b.y) <= radius;
+      const endInside = distance(destX, toY, bx, b.y) <= radius;
+      if (startInside || endInside) continue;
+      const hit = firstCircleHit(fromX, fromY, destX, toY, bx, b.y, radius);
+      if (!hit || hit.t >= best.t) continue;
+      best = { x: hit.x, y: hit.y, blockerId: b.id, t: hit.t };
+    }
   }
 
-  return { x: best.x, y: best.y, blockerId: best.blockerId };
+  return { x: wrapCoord(best.x), y: best.y, blockerId: best.blockerId };
 }
 
 export function isRetreatNode(pop: Pop): boolean {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import WorldMapLoader from "@/components/WorldMapLoader";
 import ActionPanel from "@/components/ActionPanel";
 import WindowFrame from "@/components/WindowFrame";
@@ -8,6 +8,7 @@ import NationWindow from "@/components/NationWindow";
 import WarWindow from "@/components/WarWindow";
 import CharacterWindow from "@/components/CharacterWindow";
 import SessionWindow from "@/components/SessionWindow";
+import AtlasWindow, { type AtlasGenerate } from "@/components/AtlasWindow";
 import TopBar from "@/components/TopBar";
 import Outliner from "@/components/Outliner";
 import BattleReport from "@/components/BattleReport";
@@ -22,15 +23,21 @@ import { useWars } from "@/engine/useWars";
 import { tickAll } from "@/engine/tick";
 import { advanceDay, advanceTurn } from "@/engine/sessionStore";
 import { buildSnapshot, downloadSnapshot, parseSnapshot } from "@/engine/worldIO";
+import { packTerrain, unpackTerrain } from "@/engine/terrain";
+import { getTerrain, getTerrainPreview, newWorld, replaceTerrain, revealAlong } from "@/engine/useTerrain";
+import { getAtlasUi, setAtlasUi } from "@/engine/atlasUi";
 import { makeWindow, type GameWindow } from "@/engine/windows";
 import { turnMarchRange } from "@/engine/movement";
 import {
   armiesInContact,
+  applyStaffRemain,
+  closeReel,
   continueReel,
   eligibleJoiners,
   firstContact,
   isGhost,
   mergeReelArmies,
+  playOutReel,
   startReel,
   strikeGhost,
   suggestTerrain,
@@ -58,12 +65,12 @@ export default function TableApp() {
   const [marchingArmyId, setMarchingArmyId] = useState<string | null>(null);
   const [marchMode, setMarchMode] = useState<MarchMode>("march");
   const [selectedNationId, setSelectedNationId] = useState<string | null>("vestoria");
-  const [log, setLog] = useState("Staffed table. Friday is war. Saturday is numbers.");
-  const [staffLive, setStaffLive] = useState(true);
+  const [log, setLog] = useState("Order a banner. Write to the court. A war does not need a sign.");
+  const [staffLive, setStaffLive] = useState(false);
   const [tableMode, setTableMode] = useState<TableMode>("peace");
   const [dock, setDock] = useState<Dock>("none");
   const [reportWarId, setReportWarId] = useState<string | null>(null);
-  const seededNation = useRef(false);
+  const [outlinerOpen, setOutlinerOpen] = useState(false);
 
   const ready =
     session &&
@@ -76,17 +83,15 @@ export default function TableApp() {
     warsState.ready;
 
   useEffect(() => {
-    if (!ready || seededNation.current) return;
-    const n =
-      nationsState.nations.find((x) => x.id === "vestoria") ??
-      nationsState.nations.find((x) => x.id !== "unclaimed");
-    if (!n) return;
-    seededNation.current = true;
-    setWindows((cur) => {
-      if (cur.some((w) => w.kind === "nation")) return cur;
-      return [makeWindow("nation", n.name, n.id, 16, 64), ...cur];
-    });
-  }, [ready, nationsState.nations]);
+    if (staffLive) return;
+    setWindows((cur) => (cur.some((w) => w.kind === "atlas") ? cur.filter((w) => w.kind !== "atlas") : cur));
+    setAtlasUi({ tool: "none" });
+  }, [staffLive]);
+
+  useEffect(() => {
+    if (windows.some((w) => w.kind === "atlas")) return;
+    if (getAtlasUi().tool !== "none") setAtlasUi({ tool: "none" });
+  }, [windows]);
 
   if (!ready || !session || !setSession) {
     return (
@@ -105,7 +110,10 @@ export default function TableApp() {
   const { actions, add: addAction, setStatus, setActions } = actionsState;
   const selectedNation = nations.find((n) => n.id === selectedNationId) ?? null;
   const openWars = warsState.wars.filter((w) => w.status === "declared").length;
-  const friday = tableMode === "friday";
+  const friday = staffLive && tableMode === "friday";
+  const atWarIds = warsState.wars
+    .filter((w) => w.status === "declared")
+    .flatMap((w) => [w.attackerNationId, w.defenderNationId]);
 
   function exportWorld() {
     downloadSnapshot(
@@ -118,6 +126,7 @@ export default function TableApp() {
         actions,
         charactersState.characters,
         warsState.wars,
+        getTerrain() ? packTerrain(getTerrain()!) : undefined,
       ),
     );
   }
@@ -133,7 +142,30 @@ export default function TableApp() {
     setActions(snap.actions ?? []);
     charactersState.setCharacters(snap.characters ?? []);
     warsState.setWars(snap.wars ?? []);
+    if (snap.terrain) {
+      const next = unpackTerrain(snap.terrain);
+      if (next) replaceTerrain(next);
+    }
     setLog("World imported. If it is not on the sheet, it did not happen — until now.");
+  }
+
+  function generateWorld(job: AtlasGenerate) {
+    const sx = job.width / current.mapWidth;
+    const sy = job.height / current.mapHeight;
+    if (sx !== 1 || sy !== 1) {
+      const fit = <T extends { x: number; y: number }>(items: T[]) =>
+        items.map((p) => ({
+          ...p,
+          x: Math.max(0, Math.min(job.width - 1, p.x * sx)),
+          y: Math.max(0, Math.min(job.height - 1, p.y * sy)),
+        }));
+      setPops(fit(pops));
+      nodesState.setNodes(fit(nodesState.nodes));
+      armiesState.setArmies(fit(armiesState.armies));
+    }
+    setSession({ ...current, mapWidth: job.width, mapHeight: job.height });
+    newWorld(job.seed, job.sea, job);
+    setLog(`New world · ${job.width}×${job.height}${job.wrap === false ? " · theater" : " · planet"}.`);
   }
 
   function pushWindow(kind: GameWindow["kind"], title: string, payload: string) {
@@ -143,6 +175,8 @@ export default function TableApp() {
       const slot =
         kind === "war"
           ? { x: 420, y: 72 }
+          : kind === "atlas"
+            ? { x: 72, y: 72 }
           : kind === "nation"
             ? { x: 16, y: 64 }
             : kind === "queue"
@@ -200,6 +234,7 @@ export default function TableApp() {
     );
     armiesState.setArmies(moved);
     setMarchingArmyId(null);
+    revealAlong(army.x, army.y, x, y, current.mapWidth, current.mapHeight);
     const next = moved.find((a) => a.id === armyId);
     if (!next) {
       setLog("Marched.");
@@ -262,7 +297,7 @@ export default function TableApp() {
     setTableMode("friday");
   }
 
-  function startFridayReel(warId: string, armyList: Army[] = armiesState.armies, warOverride?: War) {
+  function startFridayReel(warId: string, armyList: Army[] = armiesState.armies, warOverride?: War, playOut = false) {
     const war = warOverride ?? warsState.wars.find((w) => w.id === warId);
     if (!war || war.status !== "declared") return;
     if (war.reel) {
@@ -289,10 +324,22 @@ export default function TableApp() {
       setLog("Ghost struck. The pin is gone.");
       return;
     }
-    const reel = startReel({ attackers, defenders, terrain: war.terrain, pops });
+    const opened = startReel({ attackers, defenders, terrain: war.terrain, pops });
+    const reel = playOut ? playOutReel(opened) : opened;
     const merged = mergeReelArmies(armyList, reel).map((a) =>
       a.id === attackers[0]!.id ? { ...a, actionUsed: true } : a,
     );
+    if (playOut) {
+      const closed = closeReel(reel, merged, pops);
+      armiesState.setArmies(closed.armies);
+      const patch = { status: "resolved" as const, pendingAttack: false, reel: undefined, report: closed.report };
+      if (warsState.wars.some((w) => w.id === war.id)) warsState.update(war.id, patch);
+      else warsState.add({ ...war, ...patch });
+      setReportWarId(warId);
+      setTableMode("friday");
+      setLog(`${closed.report.summary} Occupy.`);
+      return;
+    }
     armiesState.setArmies(merged);
     if (warsState.wars.some((w) => w.id === war.id)) {
       warsState.update(war.id, { reel, report: reel.report, pendingAttack: false });
@@ -302,6 +349,26 @@ export default function TableApp() {
     setReportWarId(warId);
     setTableMode("friday");
     setLog(`Shock. ${reel.report.summary}`);
+  }
+
+  function fightOut(staff?: StaffRemain[], warId: string | null = reportWarId) {
+    const war = warsState.wars.find((w) => w.id === warId);
+    if (!war || war.status !== "declared") return;
+    if (!war.reel) {
+      startFridayReel(war.id, armiesState.armies, war, true);
+      return;
+    }
+    const played = playOutReel(staff?.length ? applyStaffRemain(war.reel, staff) : war.reel);
+    const closed = closeReel(played, armiesState.armies, pops);
+    armiesState.setArmies(closed.armies);
+    warsState.update(war.id, {
+      status: "resolved",
+      pendingAttack: false,
+      reel: undefined,
+      report: closed.report,
+    });
+    setReportWarId(war.id);
+    setLog(`${closed.report.summary} Occupy.`);
   }
 
   function continueBattle(staff?: StaffRemain[]) {
@@ -392,7 +459,7 @@ export default function TableApp() {
           startFridayReel(existing.id, spent, patched);
           return;
         }
-        setLog(`Attack ordered — ${existing.title}. Friday to resolve.`);
+        setLog(`Attack ordered — ${existing.title}. The table will fight it.`);
       } else {
         const war = makeWar(atk, def, terrain, { attacker: atkName, defender: defName }, {
           attackerIds: atkJoin.map((a) => a.id),
@@ -403,7 +470,7 @@ export default function TableApp() {
           return;
         }
         warsState.add(war);
-        setLog(`Attack ordered — ${war.title}. Friday to resolve.`);
+        setLog(`Attack ordered — ${war.title}. The table will fight it.`);
       }
     };
     if (fromQueue || staffLive) {
@@ -568,16 +635,18 @@ export default function TableApp() {
     setDock("actions");
   }
 
-  function renderWarBoard() {
+  function renderWarBoard(audience: "staff" | "player" = "staff") {
     return (
       <WarWindow
         wars={warsState.wars}
         armies={armiesState.armies}
         nations={nations}
         compact={friday}
+        audience={audience}
         onTerrain={(id, terrain: TerrainId) => warsState.update(id, { terrain })}
         onDeclare={declareWar}
-        onResolve={startFridayReel}
+        onResolve={(id) => startFridayReel(id)}
+        onFight={(id) => fightOut(undefined, id)}
         onInconclusive={markInconclusive}
         onToggleArmy={toggleWarArmy}
         onAdvanceTurn={advanceWarTurn}
@@ -587,7 +656,7 @@ export default function TableApp() {
   }
 
   return (
-    <main className={cn("relative flex h-dvh flex-col overflow-hidden bg-bg text-fg", friday && "ink-friday")}>
+    <main className="relative flex h-dvh flex-col overflow-hidden bg-bg text-fg">
       <TopBar
         session={current}
         staffLive={staffLive}
@@ -599,9 +668,12 @@ export default function TableApp() {
         onDay={() => setSession(advanceDay(current))}
         onSaturday={runTick}
         onClock={() => pushWindow("session", "Session clock", "session")}
-        onQueue={() => pushWindow("queue", "Action queue", "queue")}
+        onQueue={() => pushWindow("queue", "Letters", "queue")}
         onExport={exportWorld}
         onImport={(file) => void importWorld(file)}
+        outlinerOpen={outlinerOpen}
+        onOutliner={() => setOutlinerOpen((v) => !v)}
+        onAtlas={() => pushWindow("atlas", "Atlas", "atlas")}
       />
       <div className="relative min-h-0 flex-1">
         <div className="absolute inset-0 isolate z-0">
@@ -615,6 +687,7 @@ export default function TableApp() {
             selectedArmyId={selectedArmyId}
             marchingArmyId={marchingArmyId}
             staffLive={staffLive}
+            atWarNationIds={atWarIds}
             pops={pops}
             nodes={nodesState.nodes}
             armies={armiesState.armies}
@@ -646,7 +719,8 @@ export default function TableApp() {
             onRemoveArmy={armiesState.remove}
           />
         </div>
-        <div className="ink-panel absolute top-3 right-3 z-chrome hidden h-[calc(100%-4.5rem)] w-64 overflow-hidden lg:block">
+        {outlinerOpen && (
+        <div className="ink-panel absolute top-3 right-3 z-chrome h-[min(32rem,calc(100%-1.5rem))] w-64 overflow-hidden">
           <Outliner
             nations={nations}
             pops={pops}
@@ -662,17 +736,30 @@ export default function TableApp() {
               setSelectedArmyId(id);
               setMarchingArmyId(null);
             }}
+            staffLive={staffLive}
           />
         </div>
-        {friday && (
-          <aside className="friday-dock ink-panel ink-scroll" aria-label="Friday war dock">
+        )}
+        {staffLive && friday && (
+          <aside className="friday-dock ink-panel ink-scroll" aria-label="Staff war day">
             <header className="ink-hairline flex items-baseline justify-between bg-raised px-3 py-2">
-              <h2 className="font-display text-sm tracking-[0.16em] text-gold">Friday</h2>
+              <h2 className="font-display text-sm tracking-[0.16em] text-gold">War day</h2>
               <span className="text-[11px] text-muted tabular">
-                {openWars} war{openWars === 1 ? "" : "s"} · turns ~4
+                {openWars} war{openWars === 1 ? "" : "s"} · staff
               </span>
             </header>
-            <div className="p-3">{renderWarBoard()}</div>
+            <div className="p-3">{renderWarBoard("staff")}</div>
+          </aside>
+        )}
+        {!staffLive && openWars > 0 && (
+          <aside className="friday-dock ink-panel ink-scroll" aria-label="Open wars">
+            <header className="ink-hairline flex items-baseline justify-between bg-raised px-3 py-2">
+              <h2 className="font-display text-sm tracking-[0.16em] text-gold">At war</h2>
+              <span className="text-[11px] text-muted tabular">
+                {openWars} war{openWars === 1 ? "" : "s"}
+              </span>
+            </header>
+            <div className="p-3">{renderWarBoard("player")}</div>
           </aside>
         )}
       </div>
@@ -682,6 +769,7 @@ export default function TableApp() {
           {dock === "actions" ? (
             <ActionPanel
               actions={actions}
+              staff={staffLive}
               onSubmit={(title, detail) => addAction(makeAction("flavor", title, detail))}
               onAccept={acceptAction}
               onDeny={(id) => setStatus(id, "denied")}
@@ -693,6 +781,8 @@ export default function TableApp() {
               characters={charactersState.characters}
               session={current}
               docked
+              atWar={atWarIds.includes(selectedNation.id)}
+              staffLive={staffLive}
               onOpenCharacter={openCharacter}
               onChange={(patch) => nationsState.update(selectedNation.id, patch)}
               onConvert={() => queueConvert(selectedNation.id)}
@@ -710,7 +800,7 @@ export default function TableApp() {
           className={cn("min-h-12 flex-1", dock === "actions" && "bg-raised")}
           onClick={() => setDock((d) => (d === "actions" ? "none" : "actions"))}
         >
-          Queue
+          Letters
         </button>
         <button type="button" className="min-h-12 flex-1" onClick={() => setDock("none")}>
           Map
@@ -723,11 +813,6 @@ export default function TableApp() {
           Court
         </button>
       </nav>
-
-      <p className="hidden border-t border-gold-dim bg-bg px-3 py-1 text-[11px] text-muted md:block">
-        {log}
-      </p>
-
       {windows.map((win, i) => (
         <WindowFrame
           key={win.id}
@@ -754,6 +839,8 @@ export default function TableApp() {
                   pops={pops}
                   characters={charactersState.characters}
                   session={current}
+                  atWar={atWarIds.includes(nation.id)}
+                  staffLive={staffLive}
                   onOpenCharacter={openCharacter}
                   onChange={(patch) => nationsState.update(nation.id, patch)}
                   onConvert={() => queueConvert(nation.id)}
@@ -763,12 +850,13 @@ export default function TableApp() {
           {win.kind === "queue" && (
             <ActionPanel
               actions={actions}
+              staff={staffLive}
               onSubmit={(title, detail) => addAction(makeAction("flavor", title, detail))}
               onAccept={acceptAction}
               onDeny={(id) => setStatus(id, "denied")}
             />
           )}
-          {win.kind === "war" && renderWarBoard()}
+          {win.kind === "war" && renderWarBoard(staffLive ? "staff" : "player")}
           {win.kind === "character" &&
             (() => {
               const ch = charactersState.characters.find((c) => c.id === win.payload);
@@ -784,6 +872,14 @@ export default function TableApp() {
           {win.kind === "session" && (
             <SessionWindow session={current} onChange={setSession} />
           )}
+          {win.kind === "atlas" && (
+            <AtlasWindow
+              mapWidth={current.mapWidth}
+              mapHeight={current.mapHeight}
+              nations={nations}
+              onGenerate={generateWorld}
+            />
+          )}
         </WindowFrame>
       ))}
       {(() => {
@@ -797,9 +893,14 @@ export default function TableApp() {
             defenderNationId={war.defenderNationId}
             mapWidth={current.mapWidth}
             mapHeight={current.mapHeight}
+            mapSrc={getTerrainPreview() || undefined}
             reelLive={Boolean(war.reel)}
+            reelDone={Boolean(war.reel?.done)}
             phaseIndex={war.reel?.index ?? Math.max(0, (war.report.phases.length || 1) - 1)}
+            staff={staffLive}
             onContinue={continueBattle}
+            onFightOut={staffLive ? fightOut : undefined}
+            onDismiss={() => setReportWarId(null)}
             onOverride={staffLive ? (grade) => overrideWarGrade(war.id, grade) : undefined}
           />
         );

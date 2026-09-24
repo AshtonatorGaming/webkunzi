@@ -1,4 +1,5 @@
 import type { GameAction } from "./actionTypes";
+import type { TerrainPack } from "./terrain";
 import type {
   Army,
   Character,
@@ -19,6 +20,7 @@ export function buildSnapshot(
   actions: GameAction[] = [],
   characters: Character[] = [],
   wars: War[] = [],
+  terrain?: TerrainPack | null,
 ): WorldSnapshot {
   return {
     version: 1,
@@ -30,6 +32,7 @@ export function buildSnapshot(
     actions,
     characters,
     wars,
+    ...(terrain ? { terrain } : {}),
   };
 }
 
@@ -43,6 +46,7 @@ export function parseSnapshot(raw: string): WorldSnapshot {
     actions: data.actions ?? [],
     characters: data.characters ?? [],
     wars: data.wars ?? [],
+    terrain: data.terrain,
   };
 }
 

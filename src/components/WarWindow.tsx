@@ -24,10 +24,12 @@ export default function WarWindow({
   onTerrain,
   onDeclare,
   onResolve,
+  onFight,
   onInconclusive,
   onToggleArmy,
   onAdvanceTurn,
   onOpenReport,
+  audience = "staff",
 }: {
   wars: War[];
   armies: Army[];
@@ -36,10 +38,12 @@ export default function WarWindow({
   onTerrain: (id: string, terrain: TerrainId) => void;
   onDeclare: (attackerId: string, defenderId: string) => void;
   onResolve: (id: string) => void;
+  onFight: (id: string) => void;
   onInconclusive: (id: string) => void;
   onToggleArmy: (warId: string, armyId: string, side: "attacker" | "defender") => void;
   onAdvanceTurn: (id: string) => void;
   onOpenReport: (id: string) => void;
+  audience?: "staff" | "player";
 }) {
   const living = armies.filter((a) => a.ownerId !== "unclaimed" && !isGhost(a));
   const [atkId, setAtkId] = useState(living[0]?.id ?? "");
@@ -49,6 +53,38 @@ export default function WarWindow({
   const armyOf = (id: string) => armies.find((a) => a.id === id);
   const open = wars.filter((w) => w.status === "declared");
   const done = wars.filter((w) => w.status === "resolved").slice(0, 6);
+
+  if (audience === "player") {
+    return (
+      <div className="space-y-3">
+        {open.length === 0 && <p className="text-sm text-muted">No war on the painting.</p>}
+        {open.map((war) => {
+          const turnsLeft = Math.max(0, war.warTurns - war.warTurn + 1);
+          return (
+            <article key={war.id} className="rounded-sm border border-border bg-raised p-2">
+              <div className="flex items-center gap-2">
+                <Crest color={colorOf(war.attackerNationId)} size={18} />
+                <span className="font-medium">{nameOf(war.attackerNationId)}</span>
+                <span className="text-subtle">and</span>
+                <Crest color={colorOf(war.defenderNationId)} size={18} />
+                <span className="font-medium">{nameOf(war.defenderNationId)}</span>
+              </div>
+              <p className="mt-1 text-xs text-muted">
+                War-turn {Math.min(war.warTurn, war.warTurns)}/{war.warTurns} · {turnsLeft} left. Banners take the orders.
+                The court may still write.
+              </p>
+              {(war.report || war.reel) && (
+                <Button className="mt-2 h-10 w-full" onClick={() => onOpenReport(war.id)}>
+                  Read the fight
+                </Button>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    );
+  }
+
   const labelOf = (a: Army) =>
     `${nameOf(a.ownerId)} · ${Math.round(armyStrength(a))} · ${a.units?.[0]?.name ?? "banner"}`;
 
@@ -56,7 +92,7 @@ export default function WarWindow({
     <div className="space-y-4">
       {!compact && (
         <p className="text-xs text-muted">
-          Contact is not a battle. Attack is an order. War-turns: 1 Move + 1 Action. Reel: Shock, Early, Late.
+          Staff clock. Contact is not a battle. One order per banner — lines are not retyped each phase.
         </p>
       )}
       <div className="rounded-sm border border-border bg-raised p-2">
@@ -99,7 +135,7 @@ export default function WarWindow({
         </Button>
       </div>
       {open.length === 0 && (
-        <p className="text-sm text-muted">No open wars. Declare, then Attack — or Begin reel on Friday.</p>
+        <p className="text-sm text-muted">No open wars. Declare, then order an Attack.</p>
       )}
       {open.map((war) => {
         const leadAtk = armyOf(war.attackerArmyId);
@@ -163,9 +199,16 @@ export default function WarWindow({
                 variant="staff"
                 className="h-10 w-full"
                 disabled={!leadAtk || !leadDef}
+                onClick={() => onFight(war.id)}
+              >
+                Fight it out
+              </Button>
+              <Button
+                className="h-10 w-full"
+                disabled={!leadAtk || !leadDef}
                 onClick={() => onResolve(war.id)}
               >
-                {war.reel ? "Open reel" : "Begin reel"}
+                {war.reel ? "Open reel" : "Step the reel"}
               </Button>
               <div className="flex gap-1">
                 <Button className="h-10 flex-1" onClick={() => onInconclusive(war.id)}>

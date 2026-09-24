@@ -65,7 +65,7 @@ export default function WindowFrame({
     <div
       className={cn(
         "ink-panel ink-window absolute text-fg",
-        win.kind === "war"
+        win.kind === "war" || win.kind === "atlas"
           ? "w-[min(28rem,calc(100vw-1.5rem))]"
           : "w-[min(22rem,calc(100vw-1.5rem))]",
       )}

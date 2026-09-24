@@ -20,6 +20,8 @@ export default function NationWindow({
   characters,
   session,
   docked,
+  atWar = false,
+  staffLive = false,
   onOpenCharacter,
   onChange,
   onConvert,
@@ -30,6 +32,8 @@ export default function NationWindow({
   characters: Character[];
   session: Session;
   docked?: boolean;
+  atWar?: boolean;
+  staffLive?: boolean;
   onOpenCharacter: (id: string) => void;
   onChange: (patch: Partial<Nation>) => void;
   onConvert: () => void;
@@ -60,6 +64,11 @@ export default function NationWindow({
           <div className="text-[11px] text-muted tabular">
             {c?.pops ?? 0} pops · {formatPeople(c?.pops ?? 0, session.popValue)} souls
           </div>
+          {atWar && (
+            <p className="mt-1 text-[11px] text-gold">
+              At war. Letters still go out. Districts wait for the peace.
+            </p>
+          )}
         </div>
         {docked && onClose && (
           <button type="button" className="grid size-8 place-items-center text-muted" onClick={onClose} aria-label="Close country">
@@ -103,16 +112,19 @@ export default function NationWindow({
                 <span>
                   {d.kind} <span className="text-muted">T{d.tier}</span>
                 </span>
-                <button
-                  type="button"
-                  className="text-xs text-danger"
-                  onClick={() => onChange({ districts: nation.districts.filter((x) => x.id !== d.id) })}
-                >
-                  Strip
-                </button>
+                {staffLive && (
+                  <button
+                    type="button"
+                    className="text-xs text-danger"
+                    onClick={() => onChange({ districts: nation.districts.filter((x) => x.id !== d.id) })}
+                  >
+                    Strip
+                  </button>
+                )}
               </li>
             ))}
           </ul>
+          {(!atWar || staffLive) && (
           <div className="flex flex-wrap gap-1">
             {DISTRICT_KINDS.map((k) => (
               <Button
@@ -125,6 +137,7 @@ export default function NationWindow({
               </Button>
             ))}
           </div>
+          )}
         </div>
         {rulers.length > 0 && (
           <div>
@@ -142,7 +155,7 @@ export default function NationWindow({
           </div>
         )}
         <Button variant="gold" className="h-10 w-full" onClick={onConvert}>
-          Write a conversion
+          {atWar ? "Write from the court" : "Write a conversion"}
         </Button>
       </div>
     </div>

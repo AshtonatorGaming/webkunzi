@@ -82,7 +82,7 @@ export function tickAll(
   armies: Army[],
   session: Session,
 ): { nations: Nation[]; log: string[] } {
-  const log: string[] = [`Saturday tick — turn ${session.mechanicalTurn}.`];
+  const log: string[] = [`Tick day — turn ${session.mechanicalTurn}.`];
   const next = nations.map((n) => {
     const row = tickNation(n, pops, nodes, armies, session);
     log.push(...row.log);

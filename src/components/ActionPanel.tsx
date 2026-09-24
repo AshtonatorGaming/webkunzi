@@ -16,11 +16,13 @@ export default function ActionPanel({
   onSubmit,
   onAccept,
   onDeny,
+  staff = false,
 }: {
   actions: GameAction[];
   onSubmit: (title: string, detail: string) => void;
   onAccept: (id: string) => void;
   onDeny: (id: string) => void;
+  staff?: boolean;
 }) {
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
@@ -29,7 +31,7 @@ export default function ActionPanel({
 
   return (
     <aside className="ink-scroll h-full w-full overflow-y-auto bg-surface p-3 text-fg">
-      <h2 className="mb-2 font-display text-xs tracking-[0.16em] text-gold">QUEUE</h2>
+      <h2 className="mb-2 font-display text-xs tracking-[0.16em] text-gold">LETTERS</h2>
       <form
         className="mb-3 space-y-2"
         onSubmit={(e) => {
@@ -42,29 +44,30 @@ export default function ActionPanel({
       >
         <input
           className="h-10 w-full rounded-sm border border-border bg-raised px-2 text-sm"
-          placeholder="War / RP / claim"
+          placeholder="What the court does"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <input
           className="h-10 w-full rounded-sm border border-border bg-raised px-2 text-sm"
-          placeholder="Detail for staff"
+          placeholder="For the table"
           value={detail}
           onChange={(e) => setDetail(e.target.value)}
         />
         <Button type="submit" variant="primary" className="h-10 w-full">
-          Queue
+          Send
         </Button>
       </form>
       <ul className="space-y-2">
         {pending.length === 0 && (
-          <li className="text-sm text-muted">No pending actions. Staff live applies peacetime marches now.</li>
+          <li className="text-sm text-muted">Nothing waiting. A letter still reaches the table.</li>
         )}
         {pending.map((a) => (
           <li key={a.id} className="rounded-sm border border-border bg-raised px-2 py-2 text-xs">
             <div className="font-medium text-sm text-fg">{a.title}</div>
-            <div className="text-gold">{laneLabel(a)}</div>
+            {staff && <div className="text-gold">{laneLabel(a)}</div>}
             {a.detail && <div className="text-subtle">{a.detail}</div>}
+            {staff && (
             <div className="mt-2 flex gap-1">
               <Button variant="staff" className="h-8 px-2 text-xs" onClick={() => onAccept(a.id)}>
                 Accept
@@ -73,6 +76,7 @@ export default function ActionPanel({
                 Deny
               </Button>
             </div>
+            )}
           </li>
         ))}
       </ul>

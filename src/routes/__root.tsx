@@ -13,7 +13,7 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content: "Staffed table. Friday is war. Saturday is numbers.",
+        content: "Staffed table. War day is the fight. Tick day is the numbers.",
       },
       { name: "theme-color", content: "#0e0c0a" },
     ],

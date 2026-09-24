@@ -6,7 +6,8 @@ export type WindowKind =
   | "war"
   | "character"
   | "session"
-  | "queue";
+  | "queue"
+  | "atlas";
 
 export type GameWindow = {
   id: string;

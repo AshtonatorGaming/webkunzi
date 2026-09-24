@@ -109,7 +109,7 @@ try {
     // networkidle never settles and would burn the whole timeout.
     const resp = await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
     const status = resp?.status() ?? 0;
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2200);
 
     const title = await page.title();
     const hasCanvas = (await page.locator("canvas").count()) > 0;

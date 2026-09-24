@@ -25,9 +25,14 @@ export default function BattleReport({
   defenderNationId,
   mapWidth = 6145,
   mapHeight = 3530,
+  mapSrc,
   reelLive = false,
+  reelDone = false,
   phaseIndex = 0,
+  staff = false,
   onContinue,
+  onFightOut,
+  onDismiss,
   onOverride,
 }: {
   report: Report;
@@ -36,9 +41,14 @@ export default function BattleReport({
   defenderNationId?: string;
   mapWidth?: number;
   mapHeight?: number;
+  mapSrc?: string;
   reelLive?: boolean;
+  reelDone?: boolean;
   phaseIndex?: number;
+  staff?: boolean;
   onContinue: (staff?: StaffRemain[]) => void;
+  onFightOut?: (staff?: StaffRemain[]) => void;
+  onDismiss?: () => void;
   onOverride?: (grade: BattleGrade) => void;
 }) {
   const nameOf = (id: string) => nations.find((n) => n.id === id)?.name ?? id;
@@ -49,30 +59,35 @@ export default function BattleReport({
   const defNations = sideNations(defLines, defenderNationId);
   const headline = reportHeadline(grade, report.winner, report.decisivePhase);
   const total = Math.round(report.attackerLoss + report.defenderLoss);
-  const [frozen, setFrozen] = useState(false);
+  const [correct, setCorrect] = useState(false);
   const [remains, setRemains] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    setFrozen(false);
+    setCorrect(false);
     setRemains(Object.fromEntries(report.units.map((u) => [u.unitId, Math.round(u.remain)])));
   }, [report.phases.length, report.decisivePhase]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key !== "Escape") return;
-      if (reelLive) return;
-      onContinue();
+      if (reelLive && staff) return;
+      (onDismiss ?? onContinue)();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onContinue, reelLive]);
+  }, [onContinue, onDismiss, reelLive, staff]);
+
+  function remainsOrUndefined(): StaffRemain[] | undefined {
+    if (!correct) return undefined;
+    return report.units.map((u) => ({ unitId: u.unitId, remain: remains[u.unitId] ?? u.remain }));
+  }
 
   function commit() {
-    if (reelLive && frozen) {
-      onContinue(report.units.map((u) => ({ unitId: u.unitId, remain: remains[u.unitId] ?? u.remain })));
-      return;
-    }
-    onContinue();
+    onContinue(remainsOrUndefined());
+  }
+
+  function fight() {
+    onFightOut?.(remainsOrUndefined());
   }
 
   return (
@@ -102,6 +117,7 @@ export default function BattleReport({
               y={report.y}
               mapWidth={mapWidth}
               mapHeight={mapHeight}
+              src={mapSrc}
             />
           </div>
           <h2 className="i2-side-head i2-side-head-def">Defenders</h2>
@@ -146,7 +162,7 @@ export default function BattleReport({
             title="Attacker units"
             head="i2-col-head-atk"
             lines={atkLines}
-            frozen={frozen}
+            frozen={correct}
             remains={remains}
             onRemain={(id, n) => setRemains((cur) => ({ ...cur, [id]: n }))}
           />
@@ -154,7 +170,7 @@ export default function BattleReport({
             title="Defender units"
             head="i2-col-head-def"
             lines={defLines}
-            frozen={frozen}
+            frozen={correct}
             remains={remains}
             onRemain={(id, n) => setRemains((cur) => ({ ...cur, [id]: n }))}
           />
@@ -196,23 +212,35 @@ export default function BattleReport({
             <div className="i2-stat-label">Total casualties</div>
             <div className="i2-stat-value">{total}</div>
           </div>
-          <button type="button" className="i2-continue" onClick={commit}>
-            Continue
-          </button>
+          {reelLive && staff && onFightOut && !reelDone && (
+            <button type="button" className="i2-continue" onClick={fight}>
+              Fight it out
+            </button>
+          )}
+          {reelLive && staff ? (
+            <button type="button" className={cn("i2-continue", !reelDone && "is-quiet")} onClick={commit}>
+              {reelDone ? "Occupy" : "Next phase"}
+            </button>
+          ) : (
+            <button type="button" className="i2-continue" onClick={() => (onDismiss ?? onContinue)()}>
+              Close
+            </button>
+          )}
         </div>
 
-        {(onOverride || reelLive) && (
+        {staff && (onOverride || reelLive) && (
           <div className="i2-staff">
             {reelLive && (
               <button
                 type="button"
-                className={cn("i2-freeze", frozen && "is-on")}
-                aria-pressed={frozen}
-                onClick={() => setFrozen((v) => !v)}
+                className={cn("i2-freeze", correct && "is-on")}
+                aria-pressed={correct}
+                onClick={() => setCorrect((v) => !v)}
               >
-                {frozen ? "Frozen" : "Freeze"}
+                {correct ? "Correcting" : "Correct lines"}
               </button>
             )}
+            <span>Lines take their dead. Retype only if the ruling is wrong.</span>
             {onOverride && (
               <label>
                 Staff grade
@@ -294,14 +322,16 @@ function MapCrop({
   y,
   mapWidth,
   mapHeight,
+  src,
 }: {
   x?: number;
   y?: number;
   mapWidth: number;
   mapHeight: number;
+  src?: string;
 }) {
   const fx = x ?? mapWidth / 2;
-  const fy = y ?? mapHeight / 2;
+  const fy = mapHeight - (y ?? mapHeight / 2);
   return (
     <div className="i2-map-frame">
       <div
@@ -312,7 +342,11 @@ function MapCrop({
           transform: `translate(${-fx * MAP_ZOOM}px, ${-fy * MAP_ZOOM}px) scale(${MAP_ZOOM})`,
         }}
       >
-        <img src="/maps/world.jpg" alt="" width={mapWidth} height={mapHeight} />
+        {src ? (
+          <img src={src} alt="" width={mapWidth} height={mapHeight} />
+        ) : (
+          <div style={{ width: mapWidth, height: mapHeight, background: "#1a4f73" }} />
+        )}
       </div>
     </div>
   );

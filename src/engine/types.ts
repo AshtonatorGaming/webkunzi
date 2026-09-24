@@ -245,4 +245,5 @@ export type WorldSnapshot = {
   actions?: import("./actionTypes").GameAction[];
   characters?: Character[];
   wars?: War[];
+  terrain?: import("./terrain").TerrainPack;
 };

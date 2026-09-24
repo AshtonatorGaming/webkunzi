@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   coverOf,
+  distance,
   isRetreatNode,
   nearestTown,
   retreatTowardTown,
+  setMapWrap,
   stopForZoc,
 } from "./movement.ts";
 import type { Army, Pop } from "./types.ts";
@@ -34,6 +36,18 @@ test("camp is not a retreat city", () => {
   assert.equal(isRetreatNode(city), true);
   const found = nearestTown([camp, city], "tunnu", 100, 100);
   assert.equal(found?.id, "t");
+});
+
+test("east meets west when the map is a planet", () => {
+  setMapWrap(1000);
+  try {
+    assert.ok(distance(10, 0, 990, 0) < 30);
+    const blocker: Army = { id: "b", x: 990, y: 0, ownerId: "tunnu", strength: 10 };
+    const stopped = stopForZoc(30, 0, 970, 0, [blocker], 15);
+    assert.equal(stopped.blockerId, "b");
+  } finally {
+    setMapWrap(0);
+  }
 });
 
 test("ZOC blocks the path through a disk, not the stack", () => {

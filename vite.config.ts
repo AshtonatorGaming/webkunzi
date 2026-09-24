@@ -16,11 +16,6 @@ import { isMigrationFile } from "./scripts/migration-plan.mjs";
 const LEAFLET_STUB = fileURLToPath(new URL("./src/lib/leaflet-stub.ts", import.meta.url));
 const WORLDMAP_STUB = fileURLToPath(new URL("./src/lib/worldmap-stub.tsx", import.meta.url));
 
-const LEAFLET_ALIASES = {
-  "react-leaflet": LEAFLET_STUB,
-  "@react-leaflet/core": LEAFLET_STUB,
-} as const;
-
 function isLeafletId(id: string): boolean {
   const bare = id.split("?", 1)[0] ?? id;
   if (bare.endsWith(".css")) return false;
@@ -200,10 +195,13 @@ function leafletSsrStub(): Plugin {
         export const Popup = () => null;
         export const Tooltip = () => null;
         export const Marker = () => null;
+        export const ZoomControl = () => null;
         export const useMap = () => ({ invalidateSize() {} });
         export const useMapEvents = () => null;
+        export const DomUtil = { setPosition() {}, getPosition() { return { x: 0, y: 0 }; } };
         export const CRS = { Simple: {} };
         export class LatLngBounds { constructor() {} }
+        export class Point { constructor(x = 0, y = 0) { this.x = x; this.y = y; } }
         export function divIcon() { return {}; }
         export default {};
       `;
@@ -254,7 +252,6 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
-            alias: { ...LEAFLET_ALIASES },
             rollupConfig: {
               plugins: [nitroLeafletStubPlugin()],
             },

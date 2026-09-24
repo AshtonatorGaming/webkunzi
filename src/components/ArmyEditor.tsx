@@ -12,6 +12,7 @@ export default function ArmyEditor({
   nations,
   marching,
   staffLive = false,
+  campaign = false,
   onChange,
   onDelete,
   onMarch,
@@ -23,6 +24,7 @@ export default function ArmyEditor({
   nations: Nation[];
   marching: boolean;
   staffLive?: boolean;
+  campaign?: boolean;
   onChange: (patch: Partial<Army>) => void;
   onDelete: () => void;
   onMarch: (mode: MarchMode) => void;
@@ -38,6 +40,7 @@ export default function ArmyEditor({
   const [shock, setShock] = useState(String(Math.round(comp.shock)));
   const [ranged, setRanged] = useState(String(Math.round(comp.ranged)));
   const [melee, setMelee] = useState(String(Math.round(comp.melee)));
+  const [correct, setCorrect] = useState(false);
 
   useEffect(() => {
     const next = compositionOf(army);
@@ -80,6 +83,7 @@ export default function ArmyEditor({
       {isGhost(army) && (
         <p className="text-[11px] tracking-[0.12em] text-gold">GHOST — 0 on the pin. Attack deletes if not reinforced.</p>
       )}
+      {staffLive && (
       <label className="text-muted">
         Owner
         <select
@@ -94,6 +98,7 @@ export default function ArmyEditor({
           ))}
         </select>
       </label>
+      )}
       <ul className="space-y-0.5 text-xs">
         {units.map((u) => (
           <li key={u.id} className="flex justify-between gap-2">
@@ -105,49 +110,59 @@ export default function ArmyEditor({
           </li>
         ))}
       </ul>
-      <label className="text-muted">
-        Strength
-        <input
-          type="text"
-          inputMode="numeric"
-          className="mt-0.5 w-full rounded-sm border border-border bg-raised px-2 py-1 text-fg"
-          value={strengthText}
-          onChange={(e) => setStrengthText(e.target.value)}
-          onBlur={commitStrength}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") commitStrength();
-          }}
-        />
-      </label>
-      <div className="grid grid-cols-3 gap-1">
-        <label className="text-xs text-muted">
-          Shock
-          <input
-            className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
-            value={shock}
-            onChange={(e) => setShock(e.target.value)}
-            onBlur={commitComp}
-          />
-        </label>
-        <label className="text-xs text-muted">
-          Ranged
-          <input
-            className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
-            value={ranged}
-            onChange={(e) => setRanged(e.target.value)}
-            onBlur={commitComp}
-          />
-        </label>
-        <label className="text-xs text-muted">
-          Melee
-          <input
-            className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
-            value={melee}
-            onChange={(e) => setMelee(e.target.value)}
-            onBlur={commitComp}
-          />
-        </label>
-      </div>
+      <p className="text-[11px] text-subtle">Orders move the banner. The fight writes the lines.</p>
+      {staffLive && (
+        <button type="button" className="text-left text-xs text-gold" onClick={() => setCorrect((v) => !v)}>
+          {correct ? "Hide line corrections" : "Correct lines"}
+        </button>
+      )}
+      {staffLive && correct && (
+        <>
+          <label className="text-muted">
+            Strength
+            <input
+              type="text"
+              inputMode="numeric"
+              className="mt-0.5 w-full rounded-sm border border-border bg-raised px-2 py-1 text-fg"
+              value={strengthText}
+              onChange={(e) => setStrengthText(e.target.value)}
+              onBlur={commitStrength}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") commitStrength();
+              }}
+            />
+          </label>
+          <div className="grid grid-cols-3 gap-1">
+            <label className="text-xs text-muted">
+              Shock
+              <input
+                className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
+                value={shock}
+                onChange={(e) => setShock(e.target.value)}
+                onBlur={commitComp}
+              />
+            </label>
+            <label className="text-xs text-muted">
+              Ranged
+              <input
+                className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
+                value={ranged}
+                onChange={(e) => setRanged(e.target.value)}
+                onBlur={commitComp}
+              />
+            </label>
+            <label className="text-xs text-muted">
+              Melee
+              <input
+                className="mt-0.5 w-full rounded-sm border border-border bg-raised px-1 py-1 text-fg"
+                value={melee}
+                onChange={(e) => setMelee(e.target.value)}
+                onBlur={commitComp}
+              />
+            </label>
+          </div>
+        </>
+      )}
       <div className="text-[11px] text-subtle">
         {army.posture && army.posture !== "plain" ? army.posture.replace("forceMarched", "force-marched") : "plain"}
         {army.moveUsed ? " · move spent" : ""}
@@ -156,14 +171,18 @@ export default function ArmyEditor({
       <Button variant={marching ? "primary" : "ghost"} onClick={() => onMarch("march")}>
         {marching ? "Click map to march" : "March"}
       </Button>
-      <div className="grid grid-cols-2 gap-1">
-        <Button onClick={() => onMarch("force")}>Force-march</Button>
-        <Button onClick={() => onMarch("skirmish")}>Skirmish</Button>
-      </div>
-      <Button onClick={onEntrench} disabled={army.actionUsed}>
-        Entrench
-      </Button>
-      {foes.length === 0 && (
+      {campaign && (
+        <div className="grid grid-cols-2 gap-1">
+          <Button onClick={() => onMarch("force")}>Force-march</Button>
+          <Button onClick={() => onMarch("skirmish")}>Skirmish</Button>
+        </div>
+      )}
+      {campaign && (
+        <Button onClick={onEntrench} disabled={army.actionUsed}>
+          Entrench
+        </Button>
+      )}
+      {foes.length === 0 && campaign && (
         <p className="text-[11px] text-subtle">Approach a banner to Attack. Contact is not a battle.</p>
       )}
       {foes.map((foe) => (
@@ -178,9 +197,14 @@ export default function ArmyEditor({
             : `Attack ${nations.find((n) => n.id === foe.ownerId)?.name ?? foe.ownerId}`}
         </Button>
       ))}
-      <button type="button" className="text-left text-danger" onClick={onDelete}>
-        Delete army
-      </button>
+      {!campaign && foes.length === 0 && (
+        <p className="text-[11px] text-subtle">Peacetime march. A war, when it comes, will be obvious.</p>
+      )}
+      {staffLive && (
+        <button type="button" className="text-left text-danger" onClick={onDelete}>
+          Delete army
+        </button>
+      )}
     </div>
   );
 }
