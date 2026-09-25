@@ -538,9 +538,9 @@ function sampleColumn(
     : fbm(noise.drain, (x / cols) * 3 + 1, ny * 2.5, 3);
   let elev = broad * wB + mid * wM + detail * wD + crest * (layout === "islands" ? 0.02 : 0.05);
   const pole = Math.min(ny, 1 - ny);
-  if (pole < 0.13) {
-    const t = pole / 0.13;
-    elev *= 0.12 + 0.88 * t * t;
+  if (pole < 0.07) {
+    const t = pole / 0.07;
+    elev *= 0.45 + 0.55 * t * t;
   }
   return { elev, crest, drainage };
 }
@@ -934,15 +934,15 @@ function coverLookup(land: boolean, shelf: boolean, temp: number, moist: number,
   }
   if (temp < 0.09 && (h >= 168 || iceN > 0.62)) return 6;
   if (temp < 0.2 && h >= 210 && iceN > 0.45) return 6;
-  if (h < 148 && moist > 0.58 && drainage < 0.38 && temp > 0.28 && temp < 0.62) return 7;
-  if (temp > 0.62 && moist > 0.52) return 13;
-  if (temp > 0.5 && moist < 0.3) return 8;
-  if (temp > 0.5 && moist < 0.48) return 12;
-  if (temp < 0.36 && moist > 0.36) return 14;
-  if (temp < 0.22) return 15;
-  if (moist < 0.4 && temp < 0.58) return 11;
-  if (moist > 0.46 && temp > 0.3 && temp < 0.66) return 3;
-  if (moist < 0.34) return 8;
+  if (h < 148 && moist > 0.62 && drainage < 0.38 && temp > 0.28 && temp < 0.62) return 7;
+  if (temp > 0.6 && moist > 0.55) return 13;
+  if (temp > 0.52 && moist < 0.28) return 8;
+  if (temp > 0.5 && moist < 0.44) return 12;
+  if (temp < 0.34 && moist > 0.38) return 14;
+  if (temp < 0.2) return 15;
+  if (moist < 0.36 && temp < 0.58) return 11;
+  if (moist > 0.48 && temp > 0.28 && temp < 0.66) return 3;
+  if (moist < 0.3) return 8;
   return 2;
 }
 
@@ -951,7 +951,7 @@ function rebalanceCover(cover: Uint8Array, land: Uint8Array, moist: Float32Array
   for (let i = 0; i < cover.length; i++) if (land[i]) cells.push(i);
   const landN = cells.length;
   if (landN < 30) return;
-  const cap = Math.floor(landN * 0.38);
+  const cap = Math.floor(landN * 0.62);
   const counts = new Map<number, number>();
   for (const i of cells) counts.set(cover[i]!, (counts.get(cover[i]!) ?? 0) + 1);
   const spill = (id: number, next: number, score: (i: number) => number) => {
@@ -1298,6 +1298,190 @@ function carveWater(
   return water;
 }
 
+function plateCount(layout: WorldLayout): number {
+  if (layout === "pangaea") return 3;
+  if (layout === "theater") return 4;
+  if (layout === "archipelago") return 9;
+  if (layout === "islands") return 11;
+  return 7;
+}
+
+function buildPlates(cols: number, rows: number, wrap: boolean, seed: string, layout: WorldLayout): Uint8Array {
+  const n = cols * rows;
+  const ids = new Uint8Array(n);
+  const count = plateCount(layout);
+  const rand = mulberry32(hashSeed(seed + ":plates"));
+  const seeds: { x: number; y: number }[] = [];
+  for (let k = 0; k < count; k++) {
+    seeds.push({ x: rand() * cols, y: 8 + rand() * Math.max(1, rows - 16) });
+  }
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      let best = 0;
+      let bestD = 1e12;
+      for (let k = 0; k < seeds.length; k++) {
+        let dx = x - seeds[k]!.x;
+        if (wrap) {
+          if (dx > cols / 2) dx -= cols;
+          if (dx < -cols / 2) dx += cols;
+        }
+        const dy = y - seeds[k]!.y;
+        const d = dx * dx + dy * dy * 1.15;
+        if (d < bestD) {
+          bestD = d;
+          best = k;
+        }
+      }
+      ids[y * cols + x] = best;
+    }
+  }
+  return ids;
+}
+
+function boundaryUplift(
+  plates: Uint8Array,
+  elev: Float32Array,
+  sea: number,
+  cols: number,
+  rows: number,
+  wrap: boolean,
+): Float32Array {
+  const n = cols * rows;
+  const up = new Float32Array(n);
+  for (let y = 1; y < rows - 1; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      const id = plates[i]!;
+      let border = 0;
+      let oceanTouch = elev[i]! <= sea;
+      for (const [dx, dy] of N8) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (plates[j] !== id) border += 1;
+        if (elev[j]! <= sea) oceanTouch = true;
+      }
+      if (!border) continue;
+      const cont = elev[i]! > sea ? 1 : 0.15;
+      up[i] = clamp01(border / 5) * (oceanTouch ? 0.85 : 1) * (0.55 + cont * 0.45);
+    }
+  }
+  return blurField(up, cols, rows, wrap, 0.45);
+}
+
+function erodeHeight(
+  height: Uint8Array,
+  land: Uint8Array,
+  uplift: Float32Array,
+  mountains: number,
+  cols: number,
+  rows: number,
+  wrap: boolean,
+) {
+  const n = cols * rows;
+  const mtn = mountains / 100;
+  const down = new Int32Array(n).fill(-1);
+  const h = new Float32Array(n);
+  for (let i = 0; i < n; i++) h[i] = height[i]!;
+
+  const hc: number[] = [];
+  const hi: number[] = [];
+  const cost = new Float32Array(n);
+  cost.fill(1e12);
+  for (let i = 0; i < n; i++) {
+    if (land[i]) continue;
+    cost[i] = 0;
+    hpush(hc, hi, 0, i);
+  }
+  while (hc.length) {
+    const popped = hpop(hc, hi);
+    if (!popped) break;
+    const [c, i] = popped;
+    if (c > cost[i]! + 1e-4) continue;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    for (const [dx, dy] of N8) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      const j = yy * cols + xx;
+      const step = Math.max(0, h[j]! - h[i]!) + 1;
+      const next = c + step;
+      if (next < cost[j]!) {
+        cost[j] = next;
+        down[j] = i;
+        hpush(hc, hi, next, j);
+      }
+    }
+  }
+
+  const passes = 4 + Math.round(mtn * 8);
+  const k = 0.12 + mtn * 0.1;
+  const u = 1.6 + mtn * 4.5;
+  for (let p = 0; p < passes; p++) {
+    const acc = new Float32Array(n);
+    const order: number[] = [];
+    for (let i = 0; i < n; i++) {
+      if (!land[i]) continue;
+      acc[i] = 1;
+      order.push(i);
+    }
+    order.sort((a, b) => cost[b]! - cost[a]!);
+    for (const i of order) {
+      const j = down[i]!;
+      if (j >= 0 && land[j]) acc[j] += acc[i]!;
+    }
+    for (const i of order) {
+      const j = down[i]!;
+      if (j < 0) continue;
+      const slope = Math.max(0, (h[i]! - h[j]!) / 255);
+      const cut = k * Math.sqrt(acc[i]!) * slope * (0.35 + 0.65 * (1 - uplift[i]!));
+      h[i] = Math.max(96, h[i]! - cut);
+      if (mtn > 0.04) h[i] = Math.min(255, h[i]! + uplift[i]! * u);
+    }
+  }
+
+  for (let t = 0; t < 3; t++) {
+    for (let y = 1; y < rows - 1; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        if (!land[i]) continue;
+        let low = i;
+        let lowH = h[i]!;
+        for (const [dx, dy] of N8) {
+          const yy = y + dy;
+          if (yy < 0 || yy >= rows) continue;
+          let xx = x + dx;
+          if (wrap) xx = (xx + cols) % cols;
+          else if (xx < 0 || xx >= cols) continue;
+          const j = yy * cols + xx;
+          if (h[j]! < lowH) {
+            lowH = h[j]!;
+            low = j;
+          }
+        }
+        if (low === i) continue;
+        const drop = h[i]! - lowH;
+        if (drop > 28) {
+          const move = (drop - 28) * 0.18;
+          h[i] -= move;
+          if (land[low]) h[low] += move * 0.35;
+        }
+      }
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    if (!land[i]) continue;
+    height[i] = byte(h[i]!);
+  }
+}
+
 function assignHeights(
   elev: Float32Array,
   crest: Float32Array,
@@ -1360,7 +1544,7 @@ function assignHeights(
   return { height, land };
 }
 
-/** Rain, wind, and cloud bytes. Deterministic from seed, age, height, and water. */
+/** Rain, wind, and cloud bytes. Moisture is advected with belt winds over relief. */
 export function applyWeather(field: TerrainField): void {
   const { cols, rows, wrap } = field;
   const noise = noisesFor(field.seed, field.age ?? 0);
@@ -1368,49 +1552,58 @@ export function applyWeather(field: TerrainField): void {
   const n = cols * rows;
   if (!field.sky || field.sky.length !== n) field.sky = new Uint8Array(n);
   if (!field.moist || field.moist.length !== n) field.moist = new Uint8Array(n);
-  const seaD = floodDist((i) => (field.height[i] ?? 0) < 96, cols, rows, wrap, 40);
-  for (let y = 0; y < rows; y++) {
-    const ny = rows <= 1 ? 0 : y / (rows - 1);
-    const lat = Math.abs(ny - 0.5) * 2;
-    let wind = 0.42;
-    for (let x = 0; x < cols; x++) {
-      const i = y * cols + x;
-      const prevX = wrap ? (x === 0 ? cols - 1 : x - 1) : Math.max(0, x - 1);
-      const prev = y * cols + prevX;
-      const h = field.height[i] ?? 0;
-      const land = h >= 96;
-      const ang = (x / cols) * Math.PI * 2;
-      const lon = wrap ? sampleCyl(noise.moist, ang, ny, 2.4, 1.8, 2) : fbm(noise.moist, (x / cols) * 2.2, ny * 1.6, 2);
-      const blob = wrap ? sampleCyl(noise.moist, ang + 2.4, ny + 0.08, 1.55, 1.35, 3) : fbm(noise.moist, (x / cols) * 1.4 + 3, ny * 1.2, 3);
-      const cont = Math.min(1, (seaD[i] ?? 0) / 22);
-      if (!land) {
-        wind = Math.min(0.8, wind + 0.05);
-        const m = clamp01(0.58 + (lon - 0.5) * 0.1 + (blob - 0.5) * 0.06);
-        field.moist[i] = byte(m * 255);
-        const cloud = clamp01(0.28 + lon * 0.22 + blob * 0.18 + lat * 0.08);
-        field.sky[i] = byte(52 + cloud * 150);
-        continue;
+  const moist = new Float32Array(n);
+  const precip = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const ocean = (field.height[i] ?? 0) < 96;
+    moist[i] = ocean ? 0.78 : 0.16;
+  }
+  const steps = 56;
+  for (let s = 0; s < steps; s++) {
+    const next = new Float32Array(n);
+    for (let y = 0; y < rows; y++) {
+      const ny = rows <= 1 ? 0 : y / (rows - 1);
+      const itcz = 0.5 + (sampleCyl(noise.warp, 0.4, ny, 1.2, 1.1, 2) - 0.5) * 0.1;
+      const band = ny - itcz;
+      let ux = band > 0.28 || band < -0.28 ? 1 : band > 0.08 || band < -0.08 ? -1 : 1;
+      if (Math.abs(band) < 0.04) ux = 0;
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        const sx = wrap ? (x - ux + cols) % cols : Math.max(0, Math.min(cols - 1, x - ux));
+        const src = y * cols + sx;
+        let m = moist[src]!;
+        const h = field.height[i] ?? 0;
+        const hs = field.height[src] ?? h;
+        const rise = (h - hs) / 255;
+        if (h >= 96) {
+          if (rise > 0.012) {
+            const lift = Math.min(0.22, rise * 1.6);
+            precip[i] += lift * m;
+            m *= 1 - lift;
+          } else if (rise < -0.012) {
+            m *= 0.92;
+          } else {
+            m *= 0.985;
+            precip[i] += 0.004 * m;
+          }
+        } else {
+          m = Math.min(0.86, m + 0.04);
+        }
+        next[i] = m;
       }
-      const rise = (h - (field.height[prev] ?? h)) / 255;
-      const lift = rise > 0.015 ? Math.min(0.16, rise * 1.5) : 0;
-      const shadow = rise < -0.015 ? Math.min(0.22, -rise * 1.45) : 0;
-      wind = Math.max(0.1, Math.min(0.82, wind - lift * 0.85 + 0.006));
-      let m = 0.4 + (blob - 0.5) * 0.34 + (lon - 0.5) * 0.1;
-      m += Math.exp(-(lat * lat) / 0.018) * 0.14;
-      m += Math.exp(-((lat - 0.58) * (lat - 0.58)) / 0.02) * 0.06;
-      m -= Math.exp(-((lat - 0.34) * (lat - 0.34)) / 0.007) * 0.12;
-      m -= Math.max(0, lat - 0.8) * 0.16;
-      m -= cont * 0.16;
-      m = m * wetK;
-      m = m + wind * 0.07 + lift * 0.28 - shadow * 0.5;
-      const wk = field.water?.[i] ?? 0;
-      if (wk === W_CHANNEL || wk === W_FLOOD) m += 0.03;
-      else if (wk === W_LAKE) m += 0.05;
-      m = clamp01(m);
-      field.moist[i] = byte(m * 255);
-      const cloud = clamp01(0.18 + m * 0.52 + (blob - 0.4) * 0.16);
-      field.sky[i] = byte(48 + cloud * 160);
     }
+    for (let i = 0; i < n; i++) moist[i] = next[i]!;
+  }
+  for (let i = 0; i < n; i++) {
+    const h = field.height[i] ?? 0;
+    const ocean = h < 96;
+    let m = ocean ? 0.62 : precip[i]! * 3.4 + moist[i]! * 0.35;
+    const wk = field.water?.[i] ?? 0;
+    if (wk === W_CHANNEL || wk === W_FLOOD) m += 0.03;
+    else if (wk === W_LAKE) m += 0.05;
+    m = clamp01(m * wetK);
+    field.moist[i] = byte(m * 255);
+    field.sky[i] = byte(48 + clamp01(0.18 + m * 0.55) * 160);
   }
 }
 function cellNoise(x: number, y: number, salt: number) {
@@ -1586,6 +1779,16 @@ function finishWorld(
   noise: FieldNoise,
 ): TerrainField {
   const { height, land } = assignHeights(elev, crest, seaLevel, job.mountains, cols, rows, wrap);
+  const plates = buildPlates(cols, rows, wrap, job.seed, job.layout);
+  const uplift = boundaryUplift(plates, elev, seaLevel, cols, rows, wrap);
+  if (job.mountains > 4) {
+    const boost = (job.mountains / 100) * 52;
+    for (let i = 0; i < height.length; i++) {
+      if (!land[i]) continue;
+      height[i] = byte((height[i] ?? 0) + uplift[i]! * boost);
+    }
+    erodeHeight(height, land, uplift, job.mountains, cols, rows, wrap);
+  }
   const n = cols * rows;
   const shelf = new Uint8Array(n);
   const jag = new Float32Array(n);
@@ -1699,12 +1902,12 @@ function finishWorld(
       const ang = (x / cols) * Math.PI * 2;
       const swirl = wrap ? sampleCyl(noise.moist, ang + 1.1, ny, 2.0, 1.6, 2) : fbm(noise.moist, (x / cols) * 1.9 + 4, ny * 1.5, 2);
       const cont = Math.min(1, (seaD[i] ?? 0) / 22);
-      let temp = Math.pow(Math.max(0, 1 - Math.pow(lat, 1.2)), 1.02) * warmK;
-      temp += (0.5 - lat) * 0.2 * cont;
-      temp += (swirl - 0.5) * 0.14;
+      let temp = Math.pow(Math.max(0, 1 - Math.pow(lat, 1.08)), 0.95) * warmK;
+      temp += (0.5 - lat) * 0.12 * cont;
+      temp += (swirl - 0.5) * 0.16;
       temp += (jag[i]! - 0.5) * 0.05;
-      temp += (0.48 - temp) * 0.24 * (1 - cont);
-      if (height[i]! > 150) temp -= ((height[i]! - 150) / 220) * 0.85;
+      temp += (0.5 - temp) * 0.28 * (1 - cont);
+      if (height[i]! > 150) temp -= ((height[i]! - 150) / 220) * 0.7;
       temp += (job.warmth - 50) / 260;
       if (moistF[i]! > 0.55 && temp > 0.3 && temp < 0.7) temp -= 0.02;
       tempF[i] = clamp01(temp);
