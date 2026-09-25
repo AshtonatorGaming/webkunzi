@@ -81,18 +81,24 @@ test("default seed reads as a planet", () => {
   const counts = new Map<number, number>();
   for (const id of world.terrain) counts.set(id, (counts.get(id) ?? 0) + 1);
   const land = [...counts.entries()].reduce((n, [id, c]) => (id === 0 || id === 16 ? n : n + c), 0);
-  const cold = (row: number) => {
+  const coldBand = (y0: number, y1: number) => {
     let ice = 0;
-    for (let x = 0; x < world.cols; x++) {
-      const id = world.terrain[row * world.cols + x]!;
-      if (id === 6 || id === 16 || id === 15) ice += 1;
+    let open = 0;
+    for (let y = y0; y <= y1; y++) {
+      for (let x = 0; x < world.cols; x++) {
+        const id = world.terrain[y * world.cols + x]!;
+        if (id === 6 || id === 16 || id === 15) ice += 1;
+        else open += 1;
+      }
     }
-    return ice;
+    return { ice, open };
   };
-  const north = Math.floor(world.rows * 0.04);
-  const south = world.rows - 1 - north;
-  assert.ok(cold(north) > world.cols * 0.4, `north ice ${cold(north)}`);
-  assert.ok(cold(south) > world.cols * 0.4, `south ice ${cold(south)}`);
+  const north = coldBand(0, Math.max(2, Math.floor(world.rows * 0.08)));
+  const south = coldBand(world.rows - 1 - Math.max(2, Math.floor(world.rows * 0.08)), world.rows - 1);
+  assert.ok(north.ice > world.cols * 0.15, `north ice ${north.ice}`);
+  assert.ok(south.ice > world.cols * 0.15, `south ice ${south.ice}`);
+  assert.ok(north.open > world.cols * 0.2, `north open ${north.open}`);
+  assert.ok(south.open > world.cols * 0.2, `south open ${south.open}`);
   assert.ok((counts.get(8) ?? 0) > 200, `desert ${counts.get(8)}`);
   assert.ok((counts.get(3) ?? 0) + (counts.get(13) ?? 0) > 400, "forest belt");
   assert.ok((counts.get(5) ?? 0) / land < 0.22, `ranges ${counts.get(5)} / ${land}`);
@@ -778,6 +784,24 @@ test("under is not a surface silhouette and weather is deterministic", () => {
   let mismatch = 0;
   for (let i = 0; i < a.moist.length; i += 10) if (a.moist[i] !== b.moist[i]) mismatch += 1;
   assert.equal(mismatch, 0);
+});
+
+test("a mid-latitude land row is not one climate stripe", () => {
+  const world = generateTerrain("inkunzi", 46);
+  const y = Math.floor(world.rows * 0.42);
+  const covers = new Set<number>();
+  const moists: number[] = [];
+  for (let x = 0; x < world.cols; x++) {
+    const i = y * world.cols + x;
+    const id = world.cover[i]!;
+    if (id === 0 || id === 1 || id === 16) continue;
+    covers.add(id);
+    moists.push(world.moist[i]!);
+  }
+  assert.ok(covers.size >= 3, `covers on row ${[...covers].join(",")}`);
+  const min = Math.min(...moists);
+  const max = Math.max(...moists);
+  assert.ok(max - min > 18, `moist span ${min}-${max}`);
 });
 
 

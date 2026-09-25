@@ -64,7 +64,7 @@ export const TERRAINS: TerrainDef[] = [
   { id: 7, key: "marsh", label: "Marsh", color: "#3f7048", height: 100 },
   { id: 8, key: "desert", label: "Desert", color: "#f0d59a", height: 122 },
   { id: 9, key: "river", label: "River", color: "#2f86c4", height: 96 },
-  { id: 10, key: "lake", label: "Lake", color: "#1d6fa6", height: 78 },
+  { id: 10, key: "lake", label: "Lake", color: "#247a7e", height: 78 },
   { id: 11, key: "steppe", label: "Steppe", color: "#d4b15a", height: 120 },
   { id: 12, key: "savanna", label: "Savanna", color: "#c48a3a", height: 122 },
   { id: 13, key: "jungle", label: "Jungle", color: "#0e5c38", height: 126 },
@@ -885,24 +885,61 @@ function fitSea(
 
 function shelfReach(jag: number, layout: WorldLayout): number {
   if (layout === "islands" || layout === "archipelago") return 1;
-  return jag < 0.16 ? 2 : 1;
+  if (jag < 0.22) return 3;
+  if (jag < 0.48) return 2;
+  return 1;
+}
+
+function floodDist(isSeed: (i: number) => boolean, cols: number, rows: number, wrap: boolean, cap = 36): Uint16Array {
+  const n = cols * rows;
+  const dist = new Uint16Array(n).fill(65535);
+  const q: number[] = [];
+  for (let i = 0; i < n; i++) {
+    if (!isSeed(i)) continue;
+    dist[i] = 0;
+    q.push(i);
+  }
+  for (let k = 0; k < q.length; k++) {
+    const i = q[k]!;
+    const d = dist[i]!;
+    if (d >= cap) continue;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      const j = yy * cols + xx;
+      if (dist[j]! <= d + 1) continue;
+      dist[j] = d + 1;
+      q.push(j);
+    }
+  }
+  return dist;
 }
 
 function coverLookup(land: boolean, shelf: boolean, temp: number, moist: number, drainage: number, h: number, ny: number, iceN: number): number {
   if (!land) {
     if (shelf) return 1;
     const pole = Math.min(ny, 1 - ny);
-    if (pole < 0.1 && temp < 0.32 && iceN > 0.4 && iceN < 0.9) return 16;
+    if (pole < 0.09 && temp < 0.26 && iceN > 0.55 && iceN < 0.84) return 16;
     return 0;
   }
-  if (temp < 0.14) return 6;
-  if (temp < 0.2 && h >= 200) return 6;
+  if (temp < 0.09 && (h >= 168 || iceN > 0.62)) return 6;
+  if (temp < 0.2 && h >= 210 && iceN > 0.45) return 6;
   if (h < 148 && moist > 0.58 && drainage < 0.38 && temp > 0.28 && temp < 0.62) return 7;
   if (temp > 0.62 && moist > 0.52) return 13;
   if (temp > 0.5 && moist < 0.3) return 8;
   if (temp > 0.5 && moist < 0.48) return 12;
   if (temp < 0.36 && moist > 0.36) return 14;
-  if (temp < 0.26) return 15;
+  if (temp < 0.22) return 15;
   if (moist < 0.4 && temp < 0.58) return 11;
   if (moist > 0.46 && temp > 0.3 && temp < 0.66) return 3;
   if (moist < 0.34) return 8;
@@ -1063,11 +1100,12 @@ function carveWater(
     if (j >= 0 && land[j]) acc[j] += acc[i]!;
   }
   const landN = order.length || 1;
-  let threshold = Math.max(10, Math.round(landN / 700));
+  let threshold = Math.max(8, Math.round(landN / 900));
   const mark = (cut: number) => {
     water.fill(0);
     for (const i of order) {
-      if (height[i]! >= 176) continue;
+      const high = height[i]! >= 188;
+      if (high && acc[i]! < cut * 1.8) continue;
       if (acc[i]! < cut) continue;
       water[i] = W_CHANNEL;
     }
@@ -1075,8 +1113,12 @@ function carveWater(
   mark(threshold);
   let channels = 0;
   for (let i = 0; i < n; i++) if (water[i] === W_CHANNEL) channels += 1;
+  if (channels < 120) {
+    threshold = Math.max(5, Math.round(threshold * 0.4));
+    mark(threshold);
+  }
   if (channels < 80) {
-    threshold = Math.max(8, Math.round(threshold * 0.45));
+    threshold = Math.max(4, Math.round(threshold * 0.5));
     mark(threshold);
   }
   for (let i = 0; i < n; i++) {
@@ -1326,6 +1368,7 @@ export function applyWeather(field: TerrainField): void {
   const n = cols * rows;
   if (!field.sky || field.sky.length !== n) field.sky = new Uint8Array(n);
   if (!field.moist || field.moist.length !== n) field.moist = new Uint8Array(n);
+  const seaD = floodDist((i) => (field.height[i] ?? 0) < 96, cols, rows, wrap, 40);
   for (let y = 0; y < rows; y++) {
     const ny = rows <= 1 ? 0 : y / (rows - 1);
     const lat = Math.abs(ny - 0.5) * 2;
@@ -1338,33 +1381,34 @@ export function applyWeather(field: TerrainField): void {
       const land = h >= 96;
       const ang = (x / cols) * Math.PI * 2;
       const lon = wrap ? sampleCyl(noise.moist, ang, ny, 2.4, 1.8, 2) : fbm(noise.moist, (x / cols) * 2.2, ny * 1.6, 2);
+      const blob = wrap ? sampleCyl(noise.moist, ang + 2.4, ny + 0.08, 1.55, 1.35, 3) : fbm(noise.moist, (x / cols) * 1.4 + 3, ny * 1.2, 3);
+      const cont = Math.min(1, (seaD[i] ?? 0) / 22);
       if (!land) {
         wind = Math.min(0.8, wind + 0.05);
-        const m = clamp01(0.58 + (lon - 0.5) * 0.08);
+        const m = clamp01(0.58 + (lon - 0.5) * 0.1 + (blob - 0.5) * 0.06);
         field.moist[i] = byte(m * 255);
-        const cloud = clamp01(0.3 + lat * 0.28 + lon * 0.25);
+        const cloud = clamp01(0.28 + lon * 0.22 + blob * 0.18 + lat * 0.08);
         field.sky[i] = byte(52 + cloud * 150);
         continue;
       }
       const rise = (h - (field.height[prev] ?? h)) / 255;
       const lift = rise > 0.015 ? Math.min(0.16, rise * 1.5) : 0;
-      const shadow = rise < -0.015 ? Math.min(0.18, -rise * 1.3) : 0;
+      const shadow = rise < -0.015 ? Math.min(0.22, -rise * 1.45) : 0;
       wind = Math.max(0.1, Math.min(0.82, wind - lift * 0.85 + 0.006));
-      let m = 0.42;
-      m += Math.exp(-(lat * lat) / 0.018) * 0.4;
-      m += Math.exp(-((lat - 0.58) * (lat - 0.58)) / 0.02) * 0.14;
-      m -= Math.exp(-((lat - 0.34) * (lat - 0.34)) / 0.007) * 0.3;
-      m -= Math.exp(-((lat - 0.5) * (lat - 0.5)) / 0.01) * 0.08;
-      m -= Math.max(0, lat - 0.8) * 0.28;
-      m += (lon - 0.5) * 0.08;
+      let m = 0.4 + (blob - 0.5) * 0.34 + (lon - 0.5) * 0.1;
+      m += Math.exp(-(lat * lat) / 0.018) * 0.14;
+      m += Math.exp(-((lat - 0.58) * (lat - 0.58)) / 0.02) * 0.06;
+      m -= Math.exp(-((lat - 0.34) * (lat - 0.34)) / 0.007) * 0.12;
+      m -= Math.max(0, lat - 0.8) * 0.16;
+      m -= cont * 0.16;
       m = m * wetK;
-      m = m * 0.88 + wind * 0.08 + lift * 0.25 - shadow * 0.4;
+      m = m + wind * 0.07 + lift * 0.28 - shadow * 0.5;
       const wk = field.water?.[i] ?? 0;
-      if (wk === W_CHANNEL || wk === W_FLOOD) m += 0.02;
-      else if (wk === W_LAKE) m += 0.04;
+      if (wk === W_CHANNEL || wk === W_FLOOD) m += 0.03;
+      else if (wk === W_LAKE) m += 0.05;
       m = clamp01(m);
       field.moist[i] = byte(m * 255);
-      const cloud = clamp01(0.22 + m * 0.5 + (lon - 0.5) * 0.08);
+      const cloud = clamp01(0.18 + m * 0.52 + (blob - 0.4) * 0.16);
       field.sky[i] = byte(48 + cloud * 160);
     }
   }
@@ -1575,7 +1619,7 @@ function finishWorld(
   for (let k = 0; k < shelfQ.length; k++) {
     const i = shelfQ[k]!;
     const d = oceanDist[i]!;
-    if (d >= 2) continue;
+    if (d >= 3) continue;
     const y = (i / cols) | 0;
     const x = i - y * cols;
     for (const [dx, dy] of [
@@ -1646,16 +1690,23 @@ function finishWorld(
   applyWeather(field);
   for (let i = 0; i < n; i++) moistF[i] = (field.moist[i] ?? 128) / 255;
   const warmK = 0.8 + ((job.warmth - 50) / 50) * 0.22;
+  const seaD = floodDist((i) => land[i] !== 1, cols, rows, wrap, 40);
   for (let y = 0; y < rows; y++) {
     const ny = y / rows;
     const lat = Math.abs(ny - 0.5) * 2;
     for (let x = 0; x < cols; x++) {
       const i = y * cols + x;
-      let temp = Math.pow(Math.max(0, 1 - Math.pow(lat, 1.12)), 1.05) * warmK;
+      const ang = (x / cols) * Math.PI * 2;
+      const swirl = wrap ? sampleCyl(noise.moist, ang + 1.1, ny, 2.0, 1.6, 2) : fbm(noise.moist, (x / cols) * 1.9 + 4, ny * 1.5, 2);
+      const cont = Math.min(1, (seaD[i] ?? 0) / 22);
+      let temp = Math.pow(Math.max(0, 1 - Math.pow(lat, 1.2)), 1.02) * warmK;
+      temp += (0.5 - lat) * 0.2 * cont;
+      temp += (swirl - 0.5) * 0.14;
+      temp += (jag[i]! - 0.5) * 0.05;
+      temp += (0.48 - temp) * 0.24 * (1 - cont);
       if (height[i]! > 150) temp -= ((height[i]! - 150) / 220) * 0.85;
       temp += (job.warmth - 50) / 260;
-      temp += (jag[i]! - 0.5) * 0.04;
-      if (moistF[i]! > 0.55 && temp > 0.3 && temp < 0.7) temp -= 0.03;
+      if (moistF[i]! > 0.55 && temp > 0.3 && temp < 0.7) temp -= 0.02;
       tempF[i] = clamp01(temp);
       tempA[i] = byte(tempF[i]! * 255);
     }
@@ -2065,7 +2116,21 @@ export function heightBand(h: number): string {
   return "peak";
 }
 
-export function cellBrief(field: TerrainField, x: number, y: number, mapW: number, mapH: number) {
+export function skyKind(sky: number): string {
+  if (sky < 70) return "clear air";
+  if (sky < 110) return "haze";
+  if (sky < 170) return "cloud";
+  return "overcast";
+}
+
+export function underKind(under: number, column?: "up" | "down" | null): string {
+  if (column === "up" || column === "down") return "column";
+  if (under === 1) return "chamber";
+  if (under === 2) return "tunnel";
+  return "rock";
+}
+
+export function cellBrief(field: TerrainField, x: number, y: number, mapW: number, mapH: number, plane: MapPlane = "surface") {
   const i = cellIndex(field, x, y, mapW, mapH);
   const stack = cellStack(field, i);
   const fx = effects(stack);
@@ -2073,6 +2138,35 @@ export function cellBrief(field: TerrainField, x: number, y: number, mapW: numbe
   const coverName = TERRAINS[stack.cover]?.label ?? "Ground";
   const claim = field.owner[i] ? (field.ownerIds[field.owner[i]! - 1] ?? "") : "";
   const sea = stack.cover === 0 || stack.cover === 1 || stack.cover === 16;
+  const col = field.columns?.find((c) => c.y * field.cols + c.x === i);
+  if (plane === "sky") {
+    const kind = skyKind(field.sky[i] ?? 80);
+    return {
+      biome: kind,
+      tags: [kind],
+      relief: "",
+      cover: kind,
+      water: 0,
+      climate: climateName(field.temp[i] ?? 128, field.moist[i] ?? 128),
+      band: "air",
+      claim,
+      effects: fx,
+    };
+  }
+  if (plane === "under") {
+    const kind = underKind(field.under[i] ?? 0, col?.dir ?? null);
+    return {
+      biome: kind,
+      tags: [kind],
+      relief: "",
+      cover: kind,
+      water: 0,
+      climate: "",
+      band: kind,
+      claim,
+      effects: fx,
+    };
+  }
   return {
     biome: fx.tags.length ? fx.tags.join(" + ") : coverName,
     tags: fx.tags,
@@ -2382,19 +2476,28 @@ export function renderTerrain(
       let g = rgb[1];
       let b = rgb[2];
       if ((view === "terrain" || political) && rel >= R_RANGE && id !== 0 && id !== 1 && id !== 16) {
-        r *= 0.78;
-        g *= 0.74;
-        b *= 0.68;
+        const t = (field.temp[i] ?? 128) / 255;
+        const snow = rel === R_PEAK || height[i]! >= 214 || t < 0.26 || (rel >= R_RANGE && t < 0.34 && height[i]! >= 188);
+        const rockR = snow ? 232 : 110;
+        const rockG = snow ? 238 : 91;
+        const rockB = snow ? 244 : 74;
+        const a = snow ? 0.72 : 0.62;
+        r = r * (1 - a) + rockR * a;
+        g = g * (1 - a) + rockG * a;
+        b = b * (1 - a) + rockB * a;
       }
-      if ((view === "terrain" || political) && (waterK === 1 || waterK === 2)) {
-        const a = waterK === 1 ? 0.42 : 0.22;
-        r = r * (1 - a) + 47 * a;
-        g = g * (1 - a) + 134 * a;
-        b = b * (1 - a) + 196 * a;
+      if ((view === "terrain" || political) && waterK === 1) {
+        r = r * 0.18 + 47 * 0.82;
+        g = g * 0.18 + 134 * 0.82;
+        b = b * 0.18 + 196 * 0.82;
+      } else if ((view === "terrain" || political) && waterK === 2) {
+        r = r * 0.72 + 36 * 0.28;
+        g = g * 0.72 + 96 * 0.28;
+        b = b * 0.72 + 120 * 0.28;
       } else if ((view === "terrain" || political) && waterK === 3) {
-        r = r * 0.35 + 29 * 0.65;
-        g = g * 0.35 + 111 * 0.65;
-        b = b * 0.35 + 166 * 0.65;
+        r = r * 0.22 + 36 * 0.78;
+        g = g * 0.22 + 122 * 0.78;
+        b = b * 0.22 + 126 * 0.78;
       }
       if ((view === "terrain" || political) && (field.temp[i] ?? 128) < 34 && id !== 0 && id !== 16) {
         r = r * 0.62 + 236 * 0.38;

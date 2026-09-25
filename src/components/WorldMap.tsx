@@ -636,15 +636,18 @@ export default function WorldMap({
 
   function groundLine(x: number, y: number) {
     if (!field) return "";
-    const brief = cellBrief(field, x, y, mapWidth, mapHeight);
+    const brief = cellBrief(field, x, y, mapWidth, mapHeight, plane);
     const claim = brief.claim ? (nations.find((n) => n.id === brief.claim)?.name ?? "") : "";
     const tags = brief.tags?.length ? brief.tags.join(" + ") : brief.biome;
     const bits = [tags];
     if (brief.relief) bits.push(brief.relief);
-    bits.push(brief.climate, brief.band);
-    if (brief.effects) bits.push(`move ${brief.effects.move}`, `forage ${brief.effects.forage}`);
+    if (brief.climate) bits.push(brief.climate);
+    if (brief.band) bits.push(brief.band);
+    if (layer === "military" && plane === "surface" && brief.effects) {
+      bits.push(`move ${brief.effects.move}`, `forage ${brief.effects.forage}`);
+    }
     if (claim) bits.push(claim);
-    return bits.join(" · ");
+    return bits.filter(Boolean).join(" · ");
   }
 
   function popFill(pop: Pop): string {
