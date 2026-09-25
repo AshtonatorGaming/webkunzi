@@ -14,7 +14,7 @@ import {
   type WorldGenInput,
 } from "./terrain";
 
-const KEY = "inkunzi.terrain.v14";
+const KEY = "inkunzi.terrain.v15";
 
 let current: TerrainField | null = null;
 let previewUrl = "";
