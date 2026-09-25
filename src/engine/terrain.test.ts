@@ -755,8 +755,9 @@ test("rivers are incised and lakes sit in basins", () => {
 test("earthlike landmasses are mixed sizes and not a mirror pair", () => {
   const world = generateTerrain("inkunzi", 46);
   const bodies = landBodies(world, 12).sort((a, b) => b.n - a.n);
-  assert.ok(bodies.some((b) => b.n >= 80), `no large body ${bodies.map((b) => b.n).join(",")}`);
-  assert.ok(bodies.filter((b) => b.n >= 12).length >= 2, `bodies ${bodies.length}`);
+  assert.ok(bodies.length >= 2, `bodies ${bodies.map((b) => b.n).join(",")}`);
+  assert.ok(bodies[0]!.n >= 80, `no large body ${bodies.map((b) => b.n).join(",")}`);
+  assert.ok(bodies[0]!.n >= bodies[1]!.n * 1.9, `largest ${bodies[0]!.n} second ${bodies[1]!.n}`);
 });
 
 test("under is not a surface silhouette and weather is deterministic", () => {
@@ -802,6 +803,155 @@ test("a mid-latitude land row is not one climate stripe", () => {
   const min = Math.min(...moists);
   const max = Math.max(...moists);
   assert.ok(max - min > 18, `moist span ${min}-${max}`);
+});
+
+function bandCoasts(world: ReturnType<typeof generateTerrain>, y0: number, y1: number) {
+  const { cols, rows, terrain, cover, moist } = world;
+  const solid = (id: number) => id !== 0 && id !== 1 && id !== 16;
+  const seen = new Uint8Array(terrain.length);
+  let best: number[] = [];
+  const stack: number[] = [];
+  for (let i = 0; i < terrain.length; i++) {
+    if (seen[i] || !solid(terrain[i]!)) continue;
+    const comp: number[] = [];
+    stack.push(i);
+    seen[i] = 1;
+    while (stack.length) {
+      const k = stack.pop()!;
+      comp.push(k);
+      const y = (k / cols) | 0;
+      const x = k - y * cols;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        const xx = (x + dx + cols) % cols;
+        const j = yy * cols + xx;
+        if (seen[j] || !solid(terrain[j]!)) continue;
+        seen[j] = 1;
+        stack.push(j);
+      }
+    }
+    if (comp.length > best.length) best = comp;
+  }
+  const set = new Set(best);
+  let west = 0;
+  let westN = 0;
+  let east = 0;
+  let eastN = 0;
+  const ya = Math.floor(rows * y0);
+  const yb = Math.min(rows - 1, Math.floor(rows * y1));
+  for (let y = ya; y <= yb; y++) {
+    const xs: number[] = [];
+    for (let x = 0; x < cols; x++) if (set.has(y * cols + x)) xs.push(x);
+    if (xs.length < 8) continue;
+    let gap = 0;
+    let gapAt = 0;
+    for (let k = 1; k < xs.length; k++) {
+      const g = xs[k]! - xs[k - 1]!;
+      if (g > gap) {
+        gap = g;
+        gapAt = k;
+      }
+    }
+    const split = gap > cols * 0.2;
+    const westEdge = split ? xs[gapAt]! : xs[0]!;
+    const eastEdge = split ? xs[gapAt - 1]! : xs[xs.length - 1]!;
+    const along = (x: number, edge: number, dir: number) => {
+      let d = dir > 0 ? (x - edge + cols) % cols : (edge - x + cols) % cols;
+      if (!split && dir < 0) d = edge - x;
+      if (!split && dir > 0) d = x - edge;
+      return d;
+    };
+    for (const x of xs) {
+      const i = y * cols + x;
+      const cov = cover[i]!;
+      if (cov === 0 || cov === 1 || cov === 16) continue;
+      let oceanW = false;
+      let oceanE = false;
+      for (let k = 1; k <= 6; k++) {
+        const idW = terrain[y * cols + ((x - k + cols) % cols)]!;
+        const idE = terrain[y * cols + ((x + k) % cols)]!;
+        if (!solid(idW)) oceanW = true;
+        if (!solid(idE)) oceanE = true;
+      }
+      if (oceanW && !oceanE && along(x, westEdge, -1) <= 5) {
+        west += moist[i]!;
+        westN += 1;
+      }
+      if (oceanE && !oceanW && along(x, eastEdge, 1) <= 5) {
+        east += moist[i]!;
+        eastN += 1;
+      }
+    }
+  }
+  return { west, westN, east, eastN };
+}
+
+test("subtropical west coast is drier than the east coast", () => {
+  const world = generateTerrain("inkunzi", 46);
+  let west = 0;
+  let westN = 0;
+  let east = 0;
+  let eastN = 0;
+  for (const [y0, y1] of [
+    [0.3, 0.39],
+    [0.61, 0.7],
+  ] as const) {
+    const band = bandCoasts(world, y0, y1);
+    west += band.west;
+    westN += band.westN;
+    east += band.east;
+    eastN += band.eastN;
+  }
+  assert.ok(westN >= 20 && eastN >= 20, `coast samples west ${westN} east ${eastN}`);
+  const w = west / westN;
+  const e = east / eastN;
+  assert.ok(e > w + 18, `subtropical west ${w.toFixed(1)} east ${e.toFixed(1)}`);
+});
+
+test("pangaea keeps a closed inland sea", () => {
+  const world = generateTerrain("inkunzi", LAYOUT_RECIPES.pangaea.sea, {
+    ...LAYOUT_RECIPES.pangaea,
+    layout: "pangaea",
+    level: "standard",
+  });
+  const { cols, rows, water } = world;
+  const seen = new Uint8Array(water.length);
+  let best = 0;
+  const stack: number[] = [];
+  for (let i = 0; i < water.length; i++) {
+    if (seen[i] || water[i] !== 3) continue;
+    let n = 0;
+    stack.push(i);
+    seen[i] = 1;
+    while (stack.length) {
+      const k = stack.pop()!;
+      n += 1;
+      const y = (k / cols) | 0;
+      const x = k - y * cols;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        const xx = (x + dx + cols) % cols;
+        const j = yy * cols + xx;
+        if (seen[j] || water[j] !== 3) continue;
+        seen[j] = 1;
+        stack.push(j);
+      }
+    }
+    if (n > best) best = n;
+  }
+  assert.ok(best >= 28, `inland sea ${best}`);
 });
 
 

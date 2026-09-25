@@ -542,6 +542,13 @@ function sampleColumn(
     const t = pole / 0.07;
     elev *= 0.45 + 0.55 * t * t;
   }
+  if ((layout === "earthlike" || layout === "continents") && wrap) {
+    let dx = ang - phase * 1.65;
+    while (dx > Math.PI) dx -= Math.PI * 2;
+    while (dx < -Math.PI) dx += Math.PI * 2;
+    const dome = Math.exp(-(dx * dx) / 0.5) * Math.sin(Math.PI * clamp01(ny));
+    elev += dome * 0.075;
+  }
   return { elev, crest, drainage };
 }
 
@@ -791,6 +798,10 @@ function layoutScore(layout: WorldLayout, bodies: { n: number }[], landN: number
     else score -= 2;
     if (sizes.filter((n) => n >= 3).length >= 5) score += 2;
     if ((sizes[0] ?? 0) >= 80 && sizes.filter((n) => n >= 12).length >= 2) score += 1.5;
+    const second = sizes[1] ?? 0;
+    if (second > 0 && (sizes[0] ?? 0) >= second * 2) score += 8;
+    else if (second > 0 && (sizes[0] ?? 0) >= second * 1.7) score += 4;
+    else if (second > 0 && (sizes[0] ?? 0) < second * 1.45) score -= 4;
   }
   return score;
 }
@@ -1306,27 +1317,128 @@ function plateCount(layout: WorldLayout): number {
   return 7;
 }
 
-function buildPlates(cols: number, rows: number, wrap: boolean, seed: string, layout: WorldLayout): Uint8Array {
+type Plate = { x: number; y: number; w: number; vx: number; vy: number; continental: boolean };
+
+function largestComponent(land: Uint8Array, cols: number, rows: number, wrap: boolean): number[] {
+  const n = cols * rows;
+  const seen = new Uint8Array(n);
+  let best: number[] = [];
+  const stack: number[] = [];
+  for (let i = 0; i < n; i++) {
+    if (seen[i] || !land[i]) continue;
+    const comp: number[] = [];
+    stack.push(i);
+    seen[i] = 1;
+    while (stack.length) {
+      const k = stack.pop()!;
+      comp.push(k);
+      const y = (k / cols) | 0;
+      const x = k - y * cols;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (seen[j] || !land[j]) continue;
+        seen[j] = 1;
+        stack.push(j);
+      }
+    }
+    if (comp.length > best.length) best = comp;
+  }
+  return best;
+}
+
+function buildPlates(
+  cols: number,
+  rows: number,
+  wrap: boolean,
+  seed: string,
+  layout: WorldLayout,
+  land: Uint8Array,
+): { ids: Uint8Array; plates: Plate[] } {
   const n = cols * rows;
   const ids = new Uint8Array(n);
   const count = plateCount(layout);
   const rand = mulberry32(hashSeed(seed + ":plates"));
-  const seeds: { x: number; y: number }[] = [];
+  const plates: Plate[] = [];
+  const craton = largestComponent(land, cols, rows, wrap);
+  const at = (list: number[], i: number) => {
+    const k = list[Math.max(0, Math.min(list.length - 1, i))] ?? 0;
+    return { x: k % cols, y: (k / cols) | 0 };
+  };
+  const farOn = (list: number[], fromX: number, fromY: number) => {
+    if (!list.length) return { x: rand() * cols, y: rand() * rows };
+    let best = list[0]!;
+    let bestD = -1;
+    const tries = Math.min(64, list.length);
+    for (let t = 0; t < tries; t++) {
+      const k = list[(rand() * list.length) | 0]!;
+      const x = k % cols;
+      const y = (k / cols) | 0;
+      let dx = x - fromX;
+      if (wrap) {
+        if (dx > cols / 2) dx -= cols;
+        if (dx < -cols / 2) dx += cols;
+      }
+      const dy = y - fromY;
+      const d = dx * dx + dy * dy * 0.65;
+      if (d > bestD) {
+        bestD = d;
+        best = k;
+      }
+    }
+    return { x: best % cols, y: (best / cols) | 0 };
+  };
+  const sea: number[] = [];
+  for (let i = 0; i < n; i++) if (!land[i]) sea.push(i);
   for (let k = 0; k < count; k++) {
-    seeds.push({ x: rand() * cols, y: 8 + rand() * Math.max(1, rows - 16) });
+    let w = 0.55 + rand() * 0.4;
+    let pos = craton.length ? at(craton, (rand() * craton.length) | 0) : { x: rand() * cols, y: rand() * rows };
+    let continental = false;
+    if (k === 0 && craton.length) {
+      w = layout === "pangaea" ? 1.85 : 1.7;
+      pos = at(craton, (rand() * craton.length) | 0);
+      continental = true;
+    } else if (k === 1 && craton.length) {
+      w = 1.15;
+      pos = farOn(craton, plates[0]!.x, plates[0]!.y);
+      continental = true;
+    } else if (k === count - 1) {
+      w = 0.34;
+      if (sea.length) pos = at(sea, (rand() * sea.length) | 0);
+      continental = false;
+    }
+    const ang = rand() * Math.PI * 2;
+    const speed = 0.45 + rand() * 0.9;
+    plates.push({
+      x: pos.x,
+      y: pos.y,
+      w,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed * 0.45,
+      continental,
+    });
   }
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       let best = 0;
       let bestD = 1e12;
-      for (let k = 0; k < seeds.length; k++) {
-        let dx = x - seeds[k]!.x;
+      for (let k = 0; k < plates.length; k++) {
+        let dx = x - plates[k]!.x;
         if (wrap) {
           if (dx > cols / 2) dx -= cols;
           if (dx < -cols / 2) dx += cols;
         }
-        const dy = y - seeds[k]!.y;
-        const d = dx * dx + dy * dy * 1.15;
+        const dy = y - plates[k]!.y;
+        const d = (dx * dx + dy * dy * 1.15) / (plates[k]!.w * plates[k]!.w);
         if (d < bestD) {
           bestD = d;
           best = k;
@@ -1335,25 +1447,37 @@ function buildPlates(cols: number, rows: number, wrap: boolean, seed: string, la
       ids[y * cols + x] = best;
     }
   }
-  return ids;
+  const landN = new Float32Array(count);
+  const tot = new Float32Array(count);
+  for (let i = 0; i < n; i++) {
+    tot[ids[i]!]! += 1;
+    if (land[i]) landN[ids[i]!]! += 1;
+  }
+  for (let k = 0; k < count; k++) {
+    if (k === 0 || k === 1) plates[k]!.continental = craton.length > 0;
+    else if (k !== count - 1) plates[k]!.continental = tot[k]! > 0 && landN[k]! / tot[k]! > 0.4;
+  }
+  return { ids, plates };
 }
 
-function boundaryUplift(
-  plates: Uint8Array,
-  elev: Float32Array,
-  sea: number,
+function classifyUplift(
+  ids: Uint8Array,
+  plates: Plate[],
+  land: Uint8Array,
   cols: number,
   rows: number,
   wrap: boolean,
-): Float32Array {
+): { uplift: Float32Array; rift: Float32Array } {
   const n = cols * rows;
-  const up = new Float32Array(n);
-  for (let y = 1; y < rows - 1; y++) {
+  const edge = new Float32Array(n);
+  const rift = new Float32Array(n);
+  for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const i = y * cols + x;
-      const id = plates[i]!;
-      let border = 0;
-      let oceanTouch = elev[i]! <= sea;
+      const id = ids[i]!;
+      const a = plates[id]!;
+      let best = 0;
+      let bestKind = 0;
       for (const [dx, dy] of N8) {
         const yy = y + dy;
         if (yy < 0 || yy >= rows) continue;
@@ -1361,15 +1485,85 @@ function boundaryUplift(
         if (wrap) xx = (xx + cols) % cols;
         else if (xx < 0 || xx >= cols) continue;
         const j = yy * cols + xx;
-        if (plates[j] !== id) border += 1;
-        if (elev[j]! <= sea) oceanTouch = true;
+        if (ids[j] === id) continue;
+        const b = plates[ids[j]!]!;
+        const len = Math.hypot(dx, dy) || 1;
+        const approach = ((a.vx - b.vx) * dx + (a.vy - b.vy) * dy) / len;
+        const bothLand = land[i] === 1 && land[j] === 1;
+        const aLand = a.continental || land[i] === 1;
+        const bLand = b.continental || land[j] === 1;
+        if (approach > 0.18) {
+          let s = 0.22;
+          if (aLand && bLand && bothLand) s = 1;
+          else if ((aLand && !bLand && land[i]) || (!aLand && bLand && land[i])) s = 0.72;
+          else if (!aLand && !bLand) s = 0.28;
+          if (s > best) {
+            best = s;
+            bestKind = 1;
+          }
+        } else if (approach < -0.18 && bothLand && a.continental && b.continental) {
+          bestKind = -1;
+          best = Math.max(best, 0.7);
+        } else if (bothLand && a.continental && b.continental) {
+          if (0.48 > best) {
+            best = 0.48;
+            bestKind = 1;
+          }
+        }
       }
-      if (!border) continue;
-      const cont = elev[i]! > sea ? 1 : 0.15;
-      up[i] = clamp01(border / 5) * (oceanTouch ? 0.85 : 1) * (0.55 + cont * 0.45);
+      if (bestKind > 0) edge[i] = best;
+      else if (bestKind < 0 && land[i]) rift[i] = best;
     }
   }
-  return blurField(up, cols, rows, wrap, 0.45);
+  const grown = new Float32Array(n);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (edge[i]! > grown[i]!) grown[i] = edge[i]!;
+      if (edge[i]! < 0.55 || !land[i]) continue;
+      for (const [dx, dy] of N8) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (!land[j]) continue;
+        const s = edge[i]! * 0.7;
+        if (s > grown[j]!) grown[j] = s;
+      }
+    }
+  }
+  const ring = new Float32Array(grown);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (grown[i]! < 0.35 || !land[i]) continue;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (!land[j]) continue;
+        const s = grown[i]! * 0.42;
+        if (s > ring[j]!) ring[j] = s;
+      }
+    }
+  }
+  let spread = blurField(ring, cols, rows, wrap, 0.58);
+  const uplift = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    if (!land[i]) continue;
+    uplift[i] = clamp01(spread[i]! * 1.85);
+  }
+  return { uplift, rift: blurField(rift, cols, rows, wrap, 0.55) };
 }
 
 function erodeHeight(
@@ -1383,70 +1577,65 @@ function erodeHeight(
 ) {
   const n = cols * rows;
   const mtn = mountains / 100;
-  const down = new Int32Array(n).fill(-1);
   const h = new Float32Array(n);
   for (let i = 0; i < n; i++) h[i] = height[i]!;
-
-  const hc: number[] = [];
-  const hi: number[] = [];
-  const cost = new Float32Array(n);
-  cost.fill(1e12);
-  for (let i = 0; i < n; i++) {
-    if (land[i]) continue;
-    cost[i] = 0;
-    hpush(hc, hi, 0, i);
-  }
-  while (hc.length) {
-    const popped = hpop(hc, hi);
-    if (!popped) break;
-    const [c, i] = popped;
-    if (c > cost[i]! + 1e-4) continue;
-    const y = (i / cols) | 0;
-    const x = i - y * cols;
-    for (const [dx, dy] of N8) {
-      const yy = y + dy;
-      if (yy < 0 || yy >= rows) continue;
-      let xx = x + dx;
-      if (wrap) xx = (xx + cols) % cols;
-      else if (xx < 0 || xx >= cols) continue;
-      const j = yy * cols + xx;
-      const step = Math.max(0, h[j]! - h[i]!) + 1;
-      const next = c + step;
-      if (next < cost[j]!) {
-        cost[j] = next;
-        down[j] = i;
-        hpush(hc, hi, next, j);
-      }
-    }
-  }
-
-  const passes = 4 + Math.round(mtn * 8);
-  const k = 0.12 + mtn * 0.1;
-  const u = 1.6 + mtn * 4.5;
+  const K = 0.16 + mtn * 0.45;
+  const passes = 6;
+  const rangeCut = 0.16 - mtn * 0.06;
   for (let p = 0; p < passes; p++) {
+    const down = new Int32Array(n).fill(-1);
     const acc = new Float32Array(n);
-    const order: number[] = [];
     for (let i = 0; i < n; i++) {
       if (!land[i]) continue;
       acc[i] = 1;
-      order.push(i);
+      const y = (i / cols) | 0;
+      const x = i - y * cols;
+      let best = h[i]!;
+      let dest = -1;
+      for (const [dx, dy] of N8) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (h[j]! < best - 0.15) {
+          best = h[j]!;
+          dest = j;
+        }
+      }
+      down[i] = dest;
     }
-    order.sort((a, b) => cost[b]! - cost[a]!);
+    const order: number[] = [];
+    for (let i = 0; i < n; i++) if (land[i]) order.push(i);
+    order.sort((a, b) => h[b]! - h[a]!);
     for (const i of order) {
       const j = down[i]!;
-      if (j >= 0 && land[j]) acc[j] += acc[i]!;
+      if (j >= 0 && land[j]) acc[j]! += acc[i]!;
     }
     for (const i of order) {
       const j = down[i]!;
       if (j < 0) continue;
       const slope = Math.max(0, (h[i]! - h[j]!) / 255);
-      const cut = k * Math.sqrt(acc[i]!) * slope * (0.35 + 0.65 * (1 - uplift[i]!));
-      h[i] = Math.max(96, h[i]! - cut);
-      if (mtn > 0.04) h[i] = Math.min(255, h[i]! + uplift[i]! * u);
+      const cut = Math.min(4.2, K * Math.sqrt(Math.min(acc[i]!, 4000)) * slope);
+      const u = uplift[i]!;
+      h[i] = h[i]! - cut;
+      if (u > rangeCut) {
+        const y = (i / cols) | 0;
+        const x = i - y * cols;
+        const saddle = cellNoise(x, y, 5.5) < 0.1 && u < 0.9;
+        const spine = u > 0.58 && cellNoise(x, y, 2.4) > 0.64;
+        if (saddle) {
+          if (h[i]! > 166) h[i] = 156;
+        } else if (spine) {
+          if (h[i]! < 222) h[i] = 222;
+        } else if (h[i]! < 184) h[i] = 184;
+      } else if (h[i]! < 112) h[i] = 112;
+      if (h[i]! > 248) h[i] = 248;
     }
   }
-
-  for (let t = 0; t < 3; t++) {
+  for (let t = 0; t < 2; t++) {
+    const next = new Float32Array(h);
     for (let y = 1; y < rows - 1; y++) {
       for (let x = 0; x < cols; x++) {
         const i = y * cols + x;
@@ -1467,15 +1656,15 @@ function erodeHeight(
         }
         if (low === i) continue;
         const drop = h[i]! - lowH;
-        if (drop > 28) {
-          const move = (drop - 28) * 0.18;
-          h[i] -= move;
-          if (land[low]) h[low] += move * 0.35;
+        if (drop > 28 && uplift[i]! < rangeCut) {
+          const move = (drop - 24) * 0.16;
+          next[i] = h[i]! - move;
+          if (land[low] && uplift[low]! < 0.55) next[low] = h[low]! + move * 0.3;
         }
       }
     }
+    for (let i = 0; i < n; i++) if (land[i]) h[i] = next[i]!;
   }
-
   for (let i = 0; i < n; i++) {
     if (!land[i]) continue;
     height[i] = byte(h[i]!);
@@ -1507,39 +1696,11 @@ function assignHeights(
     land[i] = 1;
     landIdx.push(i);
     const t = clamp01((elev[i]! - sea) / maxAbove);
-    height[i] = byte(114 + t * 18);
+    const rough = (crest[i]! - 0.5) * 8;
+    height[i] = byte(116 + t * 16 + rough);
   }
-  if (mtn >= 0.05 && landIdx.length > 40) {
-    const ranked = landIdx.slice().sort((a, b) => crest[b]! - crest[a]! || b - a);
-    const peakN = Math.max(1, Math.floor(landIdx.length * Math.min(0.045, 0.008 + mtn * 0.032)));
-    const rangeN = Math.max(peakN + 1, Math.floor(landIdx.length * Math.min(0.09, 0.038 + mtn * 0.055)));
-    const hillN = Math.floor(landIdx.length * 0.12);
-    const isHigh = new Uint8Array(n);
-    for (let k = 0; k < ranked.length && k < hillN; k++) {
-      const i = ranked[k]!;
-      if (k < peakN) {
-        height[i] = byte(220 + crest[i]! * 20);
-        isHigh[i] = 2;
-      } else if (k < rangeN) {
-        height[i] = byte(178 + crest[i]! * 22);
-        isHigh[i] = 1;
-      } else height[i] = byte(146 + (k % 4) * 3);
-    }
-    const widen: number[] = [];
-    for (let i = 0; i < n; i++) if (isHigh[i] === 1) widen.push(i);
-    for (const i of widen) {
-      const y = (i / cols) | 0;
-      const x = i - y * cols;
-      let xx = x + 1;
-      if (wrap) xx = xx % cols;
-      else if (xx >= cols) continue;
-      const j = y * cols + xx;
-      if (!land[j] || isHigh[j]) continue;
-      height[j] = 176;
-      isHigh[j] = 1;
-    }
-  } else {
-    for (const i of landIdx) if (height[i]! >= 168) height[i] = 136;
+  if (mtn < 0.05) {
+    for (const i of landIdx) if (height[i]! >= 150) height[i] = 136;
   }
   return { height, land };
 }
@@ -1547,63 +1708,89 @@ function assignHeights(
 /** Rain, wind, and cloud bytes. Moisture is advected with belt winds over relief. */
 export function applyWeather(field: TerrainField): void {
   const { cols, rows, wrap } = field;
-  const noise = noisesFor(field.seed, field.age ?? 0);
   const wetK = 1 + ((field.wetness - 50) / 50) * 0.22;
   const n = cols * rows;
   if (!field.sky || field.sky.length !== n) field.sky = new Uint8Array(n);
   if (!field.moist || field.moist.length !== n) field.moist = new Uint8Array(n);
-  const moist = new Float32Array(n);
-  const precip = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
-    const ocean = (field.height[i] ?? 0) < 96;
-    moist[i] = ocean ? 0.78 : 0.16;
+  const ocean = new Uint8Array(n);
+  const seaW = new Uint8Array(n);
+  const seaE = new Uint8Array(n);
+  const seaS = new Uint8Array(n);
+  for (let i = 0; i < n; i++) ocean[i] = (field.height[i] ?? 0) < 96 ? 1 : 0;
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (ocean[i]) continue;
+      for (let k = 1; k <= 6; k++) {
+        const xw = wrap ? (x - k + cols) % cols : x - k;
+        const xe = wrap ? (x + k) % cols : x + k;
+        if (xw >= 0 && xw < cols && ocean[y * cols + xw]!) seaW[i] = 1;
+        if (xe >= 0 && xe < cols && ocean[y * cols + xe]!) seaE[i] = 1;
+        const ys = y + k;
+        if (ys < rows && ocean[ys * cols + x]!) seaS[i] = 1;
+      }
+    }
   }
-  const steps = 56;
+  const moist = new Float32Array(n);
+  for (let i = 0; i < n; i++) moist[i] = ocean[i] ? 0.92 : 0.18;
+  const steps = 72;
   for (let s = 0; s < steps; s++) {
     const next = new Float32Array(n);
     for (let y = 0; y < rows; y++) {
-      const ny = rows <= 1 ? 0 : y / (rows - 1);
-      const itcz = 0.5 + (sampleCyl(noise.warp, 0.4, ny, 1.2, 1.1, 2) - 0.5) * 0.1;
-      const band = ny - itcz;
-      let ux = band > 0.28 || band < -0.28 ? 1 : band > 0.08 || band < -0.08 ? -1 : 1;
-      if (Math.abs(band) < 0.04) ux = 0;
+      const ny = rows <= 1 ? 0.5 : y / (rows - 1);
+      const lat = Math.abs(ny - 0.5) * 2;
+      let ux = -1;
+      if (lat >= 0.42 && lat < 0.78) ux = 1;
+      const horse = lat >= 0.2 && lat < 0.4;
+      const med = lat >= 0.4 && lat < 0.52;
+      const retain = horse ? 0.974 : 0.988;
+      const recycle = horse ? 0.0035 : 0.0055;
       for (let x = 0; x < cols; x++) {
         const i = y * cols + x;
+        if (ocean[i]) {
+          next[i] = 0.92;
+          continue;
+        }
         const sx = wrap ? (x - ux + cols) % cols : Math.max(0, Math.min(cols - 1, x - ux));
         const src = y * cols + sx;
-        let m = moist[src]!;
+        let m = ocean[src] ? 0.9 : moist[src]!;
+        if (ocean[src]) {
+          if (ux < 0 && horse) m = 0.64;
+          else if (ux > 0 && horse) m = 0.22;
+          else if (ux > 0 && med) m = 0.48;
+          else if (lat < 0.2) m = 0.94;
+        }
         const h = field.height[i] ?? 0;
         const hs = field.height[src] ?? h;
         const rise = (h - hs) / 255;
-        if (h >= 96) {
-          if (rise > 0.012) {
-            const lift = Math.min(0.22, rise * 1.6);
-            precip[i] += lift * m;
-            m *= 1 - lift;
-          } else if (rise < -0.012) {
-            m *= 0.92;
-          } else {
-            m *= 0.985;
-            precip[i] += 0.004 * m;
-          }
-        } else {
-          m = Math.min(0.86, m + 0.04);
+        if (h >= 156 && rise > 0.014) {
+          const dump = Math.min(0.32, rise * 2.6);
+          m *= 1 - dump;
+        } else if (hs >= 168 && rise < -0.014) {
+          m *= 0.84;
         }
-        next[i] = m;
+        m = m * retain + recycle;
+        if (horse && seaW[i] && !seaE[i]) m = Math.min(m, 0.24);
+        if (med && seaW[i] && !seaE[i] && ux > 0) m = Math.min(0.5, Math.max(0.36, m));
+        if (lat < 0.2 && (seaE[i] || seaS[i]) && h < 180) m = Math.max(m, 0.7);
+        if (lat < 0.42 && ux < 0 && seaE[i] && !seaW[i] && h < 172) m = Math.max(m, 0.58);
+        next[i] = Math.max(0.04, Math.min(0.96, m));
       }
     }
     for (let i = 0; i < n; i++) moist[i] = next[i]!;
   }
   for (let i = 0; i < n; i++) {
-    const h = field.height[i] ?? 0;
-    const ocean = h < 96;
-    let m = ocean ? 0.62 : precip[i]! * 3.4 + moist[i]! * 0.35;
-    const wk = field.water?.[i] ?? 0;
-    if (wk === W_CHANNEL || wk === W_FLOOD) m += 0.03;
-    else if (wk === W_LAKE) m += 0.05;
+    const wet = ocean[i] === 1;
+    let m = wet ? 0.58 : moist[i]!;
+    if (!wet) {
+      const wk = field.water?.[i] ?? 0;
+      if (wk === W_CHANNEL) m += 0.025;
+      else if (wk === W_FLOOD) m += 0.12;
+      else if (wk === W_LAKE) m += 0.05;
+    }
     m = clamp01(m * wetK);
     field.moist[i] = byte(m * 255);
-    field.sky[i] = byte(48 + clamp01(0.18 + m * 0.55) * 160);
+    field.sky[i] = byte(40 + clamp01(0.18 + m * 0.7) * 175);
   }
 }
 function cellNoise(x: number, y: number, salt: number) {
@@ -1755,6 +1942,174 @@ function previewOf(cover: number, water: number): number {
   return cover;
 }
 
+function sealBasins(height: Uint8Array, land: Uint8Array, cols: number, rows: number, wrap: boolean): Uint8Array {
+  const n = cols * rows;
+  const mask = new Uint8Array(n);
+  const seen = new Uint8Array(n);
+  const seaTouch = (idx: number) => {
+    const y = (idx / cols) | 0;
+    const x = idx - y * cols;
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      if (!land[yy * cols + xx]) return true;
+    }
+    return false;
+  };
+  const grow = (seed: number, limit: number) => {
+    if (seen[seed] || !land[seed] || seaTouch(seed)) return 0;
+    const floor = height[seed]!;
+    const comp: number[] = [];
+    const q = [seed];
+    seen[seed] = 1;
+    let touchesSea = false;
+    while (q.length) {
+      const c = q.pop()!;
+      comp.push(c);
+      if (comp.length > limit) return 0;
+      const y = (c / cols) | 0;
+      const x = c - y * cols;
+      for (const [dx, dy] of N8) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (!land[j]) {
+          touchesSea = true;
+          continue;
+        }
+        if (seen[j] || height[j]! > floor + 5) continue;
+        seen[j] = 1;
+        q.push(j);
+      }
+    }
+    if (touchesSea || comp.length < 28) return 0;
+    let rim = 255;
+    const set = new Set(comp);
+    for (const c of comp) {
+      const y = (c / cols) | 0;
+      const x = c - y * cols;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (set.has(j) || !land[j]) continue;
+        if (height[j]! < rim) rim = height[j]!;
+      }
+    }
+    if (rim === 255 || rim < floor) return 0;
+    const surface = Math.max(floor, rim - 1);
+    for (const c of comp) {
+      mask[c] = 1;
+      if (height[c]! > surface) height[c] = surface;
+    }
+    return comp.length;
+  };
+  const pits: number[] = [];
+  for (let i = 0; i < n; i++) {
+    if (!land[i] || seaTouch(i)) continue;
+    let pit = true;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    for (const [dx, dy] of N8) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      if (height[yy * cols + xx]! < height[i]!) pit = false;
+    }
+    if (pit) pits.push(i);
+  }
+  pits.sort((a, b) => height[a]! - height[b]!);
+  let kept = 0;
+  for (const p of pits) {
+    if (grow(p, 520)) kept += 1;
+    if (kept >= 3) break;
+  }
+  if (!kept) {
+    let best = -1;
+    let bestD = -1;
+    const dist = floodDist((i) => land[i] !== 1, cols, rows, wrap, 48);
+    for (let i = 0; i < n; i++) {
+      if (!land[i] || height[i]! >= 150) continue;
+      if ((dist[i] ?? 0) > bestD) {
+        bestD = dist[i] ?? 0;
+        best = i;
+      }
+    }
+    if (best >= 0 && bestD >= 8) {
+      const y = (best / cols) | 0;
+      const x = best - y * cols;
+      const bowl: number[] = [];
+      for (let dy = -4; dy <= 4; dy++) {
+        for (let dx = -5; dx <= 5; dx++) {
+          if (dx * dx + dy * dy > 22) continue;
+          const yy = y + dy;
+          if (yy < 0 || yy >= rows) continue;
+          let xx = x + dx;
+          if (wrap) xx = (xx + cols) % cols;
+          else if (xx < 0 || xx >= cols) continue;
+          const j = yy * cols + xx;
+          if (!land[j]) continue;
+          bowl.push(j);
+        }
+      }
+      if (bowl.length >= 28) {
+        let rim = 255;
+        const mark = new Set(bowl);
+        for (const c of bowl) {
+          const cy = (c / cols) | 0;
+          const cx = c - cy * cols;
+          for (const [dx, dy] of [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ] as const) {
+            const yy = cy + dy;
+            if (yy < 0 || yy >= rows) continue;
+            let xx = cx + dx;
+            if (wrap) xx = (xx + cols) % cols;
+            else if (xx < 0 || xx >= cols) continue;
+            const j = yy * cols + xx;
+            if (mark.has(j) || !land[j]) continue;
+            if (height[j]! < rim) rim = height[j]!;
+          }
+        }
+        if (rim !== 255) {
+          const floor = Math.min(rim - 1, Math.max(108, (height[best] ?? 120) - 4));
+          if (floor < rim) {
+            for (const j of bowl) {
+              height[j] = floor;
+              mask[j] = 1;
+            }
+          }
+        }
+      }
+    }
+  }
+  return mask;
+}
+
 function finishWorld(
   cols: number,
   rows: number,
@@ -1779,16 +2134,36 @@ function finishWorld(
   noise: FieldNoise,
 ): TerrainField {
   const { height, land } = assignHeights(elev, crest, seaLevel, job.mountains, cols, rows, wrap);
-  const plates = buildPlates(cols, rows, wrap, job.seed, job.layout);
-  const uplift = boundaryUplift(plates, elev, seaLevel, cols, rows, wrap);
-  if (job.mountains > 4) {
-    const boost = (job.mountains / 100) * 52;
+  const built = buildPlates(cols, rows, wrap, job.seed, job.layout, land);
+  const { uplift, rift } = classifyUplift(built.ids, built.plates, land, cols, rows, wrap);
+  const mtn = job.mountains / 100;
+  if (mtn > 0.04) {
+    const amp = 44 + mtn * 72;
     for (let i = 0; i < height.length; i++) {
       if (!land[i]) continue;
-      height[i] = byte((height[i] ?? 0) + uplift[i]! * boost);
+      let h = (height[i] ?? 0) + uplift[i]! * amp - rift[i]! * 22;
+      const y = (i / cols) | 0;
+      const x = i - y * cols;
+      let coast = false;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        if (!land[yy * cols + xx]) coast = true;
+      }
+      if (!coast && uplift[i]! < 0.12) h -= 8;
+      height[i] = byte(h);
     }
     erodeHeight(height, land, uplift, job.mountains, cols, rows, wrap);
   }
+  const basins = sealBasins(height, land, cols, rows, wrap);
   const n = cols * rows;
   const shelf = new Uint8Array(n);
   const jag = new Float32Array(n);
@@ -1851,6 +2226,34 @@ function finishWorld(
     }
   }
   const water = carveWater(height, land, drainage, cols, rows, wrap);
+  for (let i = 0; i < basins.length; i++) {
+    if (!basins[i]) continue;
+    water[i] = W_LAKE;
+  }
+  for (let pass = 0; pass < 4; pass++) {
+    for (let i = 0; i < n; i++) {
+      if (water[i] !== W_LAKE) continue;
+      const y = (i / cols) | 0;
+      const x = i - y * cols;
+      let rim = 255;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= rows) continue;
+        let xx = x + dx;
+        if (wrap) xx = (xx + cols) % cols;
+        else if (xx < 0 || xx >= cols) continue;
+        const j = yy * cols + xx;
+        if (water[j] === W_LAKE) continue;
+        if (height[j]! < rim) rim = height[j]!;
+      }
+      if (rim < 255 && height[i]! > rim) height[i] = rim;
+    }
+  }
   const cover = new Uint8Array(n);
   const terrain = new Uint8Array(n);
   const relief = new Uint8Array(n);
@@ -1938,10 +2341,11 @@ function finishWorld(
     else if (height[i]! >= 140) rel = R_HILL;
     else rel = R_LOW;
     relief[i] = rel;
-    terrain[i] = previewOf(cover[i]!, water[i]!);
+    if (water[i] === W_FLOOD && (cover[i] === 8 || cover[i] === 11) && moistF[i]! > 0.33) cover[i] = 2;
     if (water[i] === W_CHANNEL || water[i] === W_LAKE) {
       if (cover[i] === 9 || cover[i] === 10 || cover[i] === 0) cover[i] = 2;
     }
+    terrain[i] = previewOf(cover[i]!, water[i]!);
   }
   const strata = buildUnderSky(land, height, cols, rows, wrap);
   field.under = strata.under;
@@ -1983,16 +2387,17 @@ function generateCrust(job: {
   const landFrac = landFracFor(job.layout, job.sea);
   let best: { elev: Float32Array; crest: Float32Array; drainage: Float32Array; sea: number } | null = null;
   let bestScore = -1e9;
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const phase = attempt * 0.77;
+  const attempts = job.layout === "earthlike" || job.layout === "continents" ? 10 : 6;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const phase = attempt * 0.71;
     const fields = buildScalarFields(
       cols,
       rows,
       job.wrap,
       noise,
-      freq * (1 + attempt * 0.04),
+      freq * (1 + attempt * 0.035),
       phase,
-      job.breakup + attempt * 4,
+      job.breakup + attempt * 3,
       job.layout,
     );
     const seaLevel = fitSea(fields.elev, cols, rows, job.wrap, job.layout, landFrac);
@@ -2005,7 +2410,7 @@ function generateCrust(job: {
       bestScore = score;
       best = { ...fields, sea: seaLevel };
     }
-    if (layoutOk(job.layout, bodies, landN)) break;
+    if (job.layout !== "earthlike" && job.layout !== "continents" && layoutOk(job.layout, bodies, landN)) break;
   }
   const picked = best!;
   return finishWorld(cols, rows, job.wrap, picked.elev, picked.crest, picked.drainage, picked.sea, { ...job, age: 0 }, noise);

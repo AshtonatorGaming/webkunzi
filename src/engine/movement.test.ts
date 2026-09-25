@@ -38,6 +38,19 @@ test("camp is not a retreat city", () => {
   assert.equal(found?.id, "t");
 });
 
+test("distance across the seam is the short arc and theater is euclidean", () => {
+  setMapWrap(14400);
+  try {
+    const wrapped = distance(100, 40, 14200, 40);
+    assert.ok(Math.abs(wrapped - 300) < 1, `short arc ${wrapped}`);
+    assert.ok(wrapped < distance(100, 40, 7200, 40));
+  } finally {
+    setMapWrap(0);
+  }
+  const straight = distance(100, 40, 14200, 40);
+  assert.ok(straight > 10000, `theater ${straight}`);
+});
+
 test("east meets west when the map is a planet", () => {
   setMapWrap(1000);
   try {

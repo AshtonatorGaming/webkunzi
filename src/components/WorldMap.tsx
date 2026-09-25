@@ -373,8 +373,17 @@ function GroundLayer({
       const se = map.latLngToLayerPoint(bounds.getSouthEast());
       const w = Math.max(1, se.x - nw.x);
       const h = Math.max(1, se.y - nw.y);
+      const mapW = bounds.getEast();
+      const view = map.getBounds();
+      const span = view.getEast() - view.getWest();
+      const wider = field.wrap && span >= mapW * 0.98;
+      const needLeft = field.wrap && (wider || view.getWest() < -mapW * 0.004);
+      const needRight = field.wrap && (wider || view.getEast() > mapW * 1.004);
       nodes.forEach((canvas, k) => {
         const shift = field.wrap ? (k - 1) * w : 0;
+        const show = !field.wrap || k === 1 || (k === 0 && needLeft) || (k === 2 && needRight);
+        canvas.style.display = show ? "" : "none";
+        if (!show) return;
         DomUtil.setPosition(canvas, new Point(nw.x + shift, nw.y));
         canvas.style.width = `${w}px`;
         canvas.style.height = `${h}px`;
@@ -401,11 +410,25 @@ function GroundLayer({
     renderTerrain(field, image.data, (id) => nations.find((n) => n.id === id)?.color, view, reveal, plane, dim);
     ctx.putImageData(image, 0, 0);
     for (const canvas of nodes) canvas.getContext("2d")?.drawImage(off, 0, 0);
-    const timer = window.setTimeout(() => {
-      const main = nodes[field.wrap ? 1 : 0];
-      if (main) setTerrainPreview(main.toDataURL("image/png"));
-    }, 300);
-    return () => window.clearTimeout(timer);
+    if (off.width > 0 && off.height > 0) {
+      const mini = document.createElement("canvas");
+      mini.width = 168;
+      mini.height = 96;
+      const mctx = mini.getContext("2d");
+      if (mctx) {
+        mctx.clearRect(0, 0, mini.width, mini.height);
+        mctx.imageSmoothingEnabled = false;
+        if (field.wrap) {
+          mctx.drawImage(off, 0, 0, mini.width - 1, mini.height);
+          const strip = Math.max(1, Math.round(off.width / Math.max(1, field.cols)));
+          mctx.drawImage(off, 0, 0, strip, off.height, mini.width - 1, 0, 1, mini.height);
+        } else {
+          mctx.drawImage(off, 0, 0, mini.width, mini.height);
+        }
+        setTerrainPreview(mini.toDataURL("image/png"));
+      }
+    }
+    return undefined;
   }, [field, rev, view, nationKey, nations, drawW, drawH, reveal, plane, dim]);
 
   return null;
