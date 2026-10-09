@@ -187,7 +187,7 @@
 .ink-terrain {
   position: absolute;
   pointer-events: none;
-  image-rendering: pixelated;
+  image-rendering: auto;
 }
 
 .ink-inspector {
@@ -294,7 +294,8 @@
   color: var(--color-fg);
   font-size: 11px;
   letter-spacing: 0.03em;
-  white-space: nowrap;
+  line-height: 1.35;
+  white-space: normal;
 }
 
 .ink-minimap {

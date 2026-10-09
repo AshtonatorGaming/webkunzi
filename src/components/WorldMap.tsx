@@ -371,20 +371,14 @@ function GroundLayer({
     const place = () => {
       const nw = map.latLngToLayerPoint(bounds.getNorthWest());
       const se = map.latLngToLayerPoint(bounds.getSouthEast());
-      const w = Math.max(1, se.x - nw.x);
-      const h = Math.max(1, se.y - nw.y);
-      const mapW = bounds.getEast();
-      const view = map.getBounds();
-      const span = view.getEast() - view.getWest();
-      const wider = field.wrap && span >= mapW * 0.98;
-      const needLeft = field.wrap && (wider || view.getWest() < -mapW * 0.004);
-      const needRight = field.wrap && (wider || view.getEast() > mapW * 1.004);
+      const x0 = Math.round(nw.x);
+      const y0 = Math.round(nw.y);
+      const w = Math.max(1, Math.round(se.x - nw.x));
+      const h = Math.max(1, Math.round(se.y - nw.y));
       nodes.forEach((canvas, k) => {
         const shift = field.wrap ? (k - 1) * w : 0;
-        const show = !field.wrap || k === 1 || (k === 0 && needLeft) || (k === 2 && needRight);
-        canvas.style.display = show ? "" : "none";
-        if (!show) return;
-        DomUtil.setPosition(canvas, new Point(nw.x + shift, nw.y));
+        canvas.style.display = "";
+        DomUtil.setPosition(canvas, new Point(x0 + shift, y0));
         canvas.style.width = `${w}px`;
         canvas.style.height = `${h}px`;
       });
@@ -661,11 +655,25 @@ export default function WorldMap({
     if (!field) return "";
     const brief = cellBrief(field, x, y, mapWidth, mapHeight, plane);
     const claim = brief.claim ? (nations.find((n) => n.id === brief.claim)?.name ?? "") : "";
-    const tags = brief.tags?.length ? brief.tags.join(" + ") : brief.biome;
-    const bits = [tags];
-    if (brief.relief) bits.push(brief.relief);
-    if (brief.climate) bits.push(brief.climate);
-    if (brief.band) bits.push(brief.band);
+    const water = brief.cover === "Ocean" || brief.cover === "Shelf" || brief.cover === "Sea ice";
+    const tags = (brief.tags ?? []).filter((tag, idx, all) => tag !== "arid" || !all.includes("desert"));
+    const bits: string[] = [];
+    if (plane !== "surface") {
+      bits.push(tags.length ? tags.join(" + ") : brief.biome);
+    } else if (water) {
+      bits.push(brief.cover);
+    } else {
+      bits.push(tags.length ? tags.join(" + ") : brief.cover);
+      const relief = (brief.relief || "").toLowerCase();
+      const reliefSaid = tags.some((tag) => relief === tag || relief.includes(tag));
+      if (brief.relief && relief !== "lowland" && relief !== "ocean" && relief !== "shelf" && !reliefSaid) bits.push(brief.relief);
+      if (brief.climate) {
+        const climate = brief.climate.toLowerCase();
+        const cover = (brief.cover || "").toLowerCase();
+        const said = climate.includes(cover) || cover.includes(climate) || tags.some((tag) => climate.includes(tag));
+        if (!said) bits.push(brief.climate);
+      }
+    }
     if (layer === "military" && plane === "surface" && brief.effects) {
       bits.push(`move ${brief.effects.move}`, `forage ${brief.effects.forage}`);
     }
@@ -812,6 +820,7 @@ export default function WorldMap({
         fadeAnimation={false}
         markerZoomAnimation={false}
         bounceAtZoomLimits={false}
+        inertia={!wrapped}
         style={{ height: "100%", width: "100%", background: "var(--color-map)" }}
       >
         <ZoomControl position="topleft" />
@@ -863,7 +872,13 @@ export default function WorldMap({
             if (client) {
               const well = document.querySelector(".ink-mapwell");
               const rect = well?.getBoundingClientRect();
-              if (rect) setHoverPos({ x: client.x - rect.left + 14, y: client.y - rect.top + 16 });
+              if (rect) {
+                const rawX = client.x - rect.left + 14;
+                const rawY = client.y - rect.top + 16;
+                const x = rawX > rect.width - 200 ? Math.max(8, client.x - rect.left - 168) : rawX;
+                const y = rawY > rect.height - 64 ? Math.max(8, client.y - rect.top - 32) : rawY;
+                setHoverPos({ x, y });
+              }
             }
           }}
         />

@@ -13,8 +13,9 @@ import {
   type TerrainPack,
   type WorldGenInput,
 } from "./terrain";
+import { loadSession } from "./sessionStore";
 
-const KEY = "inkunzi.terrain.v17";
+const KEY = "inkunzi.terrain.v26";
 
 let current: TerrainField | null = null;
 let previewUrl = "";
@@ -63,9 +64,41 @@ export function setTerrainPreview(url: string) {
   previewUrl = url;
 }
 
+function freshWorld(): TerrainField {
+  let prev: TerrainPack | null = null;
+  if (typeof window !== "undefined") {
+    try {
+      const raw =
+        window.localStorage.getItem("inkunzi.terrain.v25") ||
+        window.localStorage.getItem("inkunzi.terrain.v24") ||
+        window.localStorage.getItem("inkunzi.terrain.v23") ||
+        window.localStorage.getItem("inkunzi.terrain.v22") ||
+        window.localStorage.getItem("inkunzi.terrain.v21") ||
+        window.localStorage.getItem("inkunzi.terrain.v20");
+      if (raw) prev = JSON.parse(raw) as TerrainPack;
+    } catch {
+      prev = null;
+    }
+  }
+  const session = typeof window === "undefined" ? null : loadSession();
+  return generateTerrain(prev?.seed || "inkunzi", prev?.sea ?? 46, {
+    warmth: prev?.warmth,
+    wetness: prev?.wetness,
+    mountains: prev?.mountains,
+    scale: prev?.scale,
+    wrap: prev?.wrap,
+    layout: prev?.layout,
+    level: prev?.level,
+    breakup: prev?.breakup,
+    gap: prev?.gap,
+    mapWidth: session?.mapWidth,
+    mapHeight: session?.mapHeight,
+  });
+}
+
 export function ensureTerrain(): TerrainField {
   if (!current) {
-    current = loadTerrain() ?? generateTerrain("inkunzi", 46);
+    current = loadTerrain() ?? freshWorld();
     saveNow();
   }
   return current;
