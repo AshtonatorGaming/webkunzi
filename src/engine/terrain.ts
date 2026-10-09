@@ -56,7 +56,7 @@ export type TerrainDef = {
 export const TERRAINS: TerrainDef[] = [
   { id: 0, key: "ocean", label: "Ocean", color: "#0c3d66", height: 36 },
   { id: 1, key: "coast", label: "Shelf", color: "#1e6c86", height: 86 },
-  { id: 2, key: "plains", label: "Grainland", color: "#8f9a62", height: 118 },
+  { id: 2, key: "plains", label: "Plains", color: "#8f9a62", height: 132 },
   { id: 3, key: "forest", label: "Forest", color: "#34783c", height: 128 },
   { id: 4, key: "hills", label: "Hills", color: "#a6844e", height: 158 },
   { id: 5, key: "mountain", label: "Range", color: "#c4a07a", height: 206 },
@@ -71,6 +71,11 @@ export const TERRAINS: TerrainDef[] = [
   { id: 14, key: "taiga", label: "Taiga", color: "#2c5a4a", height: 130 },
   { id: 15, key: "tundra", label: "Tundra", color: "#b4beae", height: 124 },
   { id: 16, key: "seaice", label: "Sea ice", color: "#b9cdd8", height: 48 },
+  { id: 17, key: "lightwood", label: "Light woodland", color: "#a3b07a", height: 136 },
+  { id: 18, key: "woodland", label: "Woodland", color: "#5c7a3a", height: 140 },
+  { id: 19, key: "scrub", label: "Scrub", color: "#c6b07a", height: 134 },
+  { id: 20, key: "alpine", label: "Alpine", color: "#cfc8b8", height: 210 },
+  { id: 21, key: "bog", label: "Bog", color: "#3a5c48", height: 112 },
 ];
 
 const RGB = TERRAINS.map((t) => {
@@ -538,6 +543,12 @@ function sampleColumn(
     ? sampleCyl(noise.drain, ang + 0.6, ny, 3.3, 2.8, 3)
     : fbm(noise.drain, (x / cols) * 3 + 1, ny * 2.5, 3);
   let elev = broad * wB + mid * wM + detail * wD + crest * (layout === "islands" ? 0.02 : 0.04);
+  if (layout === "earthlike" || layout === "continents") {
+    const bite = wrap
+      ? sampleCyl(noise.drain, ang * 2.35 + 0.6, ny, 4.6, 3.1, 2)
+      : fbm(noise.drain, (x / cols) * 5.2, ny * 3.4, 2);
+    elev += (bite - 0.58) * 0.05;
+  }
   const pole = Math.min(ny, 1 - ny);
   if (pole < 0.05) elev -= (1 - pole / 0.05) * 0.025;
   return { elev, crest, drainage };
@@ -937,19 +948,26 @@ function coverLookup(land: boolean, shelf: boolean, temp: number, moist: number,
     if (pole < 0.11 && temp < 0.36 && iceN > 0.6 && iceN < 0.82) return 16;
     return 0;
   }
-  if (pole < 0.2 && temp < 0.24 && iceN > 0.85) return 6;
-  if (temp < 0.08 && h >= 196) return 6;
-  if (temp < 0.14 && h >= 214) return 6;
-  if (h < 146 && moist > 0.64 && drainage < 0.36 && temp > 0.3 && temp < 0.6) return 7;
+  if (pole < 0.2 && temp < 0.22 && iceN > 0.85) return 6;
+  if (temp < 0.1 && h >= 230) return 6;
+  if (temp < 0.16 && h >= 246) return 6;
+  if (h >= 198 && temp < 0.34 && temp >= 0.08) return 20;
+  if (h >= 186 && temp < 0.26) return 20;
+  if (h < 132 && moist > 0.68 && drainage < 0.42 && temp > 0.28 && temp < 0.62) return drainage < 0.28 ? 21 : 7;
   if (temp > 0.58 && moist > 0.66) return 13;
-  if (temp > 0.5 && moist < 0.24) return 8;
-  if (temp > 0.48 && moist < 0.36) return 12;
+  if (temp > 0.52 && moist < 0.18) return 8;
+  if (temp > 0.46 && moist < 0.3) return 19;
+  if (temp > 0.48 && moist < 0.4) return 12;
   if (temp < 0.08) return 15;
-  if (temp < 0.3 && moist < 0.38) return 15;
-  if (temp < 0.4 && moist > 0.46) return 14;
-  if (moist < 0.32 && temp < 0.56) return 11;
-  if (moist > 0.38 && temp > 0.24 && temp < 0.7) return 3;
-  if (moist < 0.26 && temp > 0.5) return 8;
+  if (temp < 0.28 && moist < 0.36) return 15;
+  if (temp < 0.4 && moist > 0.48) return 14;
+  if (moist < 0.28 && temp < 0.56) return 11;
+  if (temp > 0.22 && temp < 0.7) {
+    if (moist > 0.58) return 3;
+    if (moist > 0.46) return 18;
+    if (moist > 0.36) return 17;
+  }
+  if (moist < 0.22 && temp > 0.48) return 8;
   if (moist < 0.3) return temp < 0.32 ? 15 : 11;
   return 2;
 }
@@ -981,7 +999,7 @@ function ortho(
 function carveWater(
   height: Uint8Array,
   land: Uint8Array,
-  drainage: Float32Array,
+  flow: Float32Array,
   cols: number,
   rows: number,
   wrap: boolean,
@@ -1101,8 +1119,11 @@ function carveWater(
       sum += height[j]!;
       c += 1;
     }
-    if (!c) height[i] = Math.min(height[i]!, 118);
-    else height[i] = Math.max(102, Math.min(height[i]!, Math.round(sum / c) - 6));
+    if (!c) height[i] = Math.min(height[i]!, 130);
+    else {
+      const extra = Math.min(16, Math.log2(Math.max(2, acc[i]!)) * 1.6);
+      height[i] = Math.max(100, Math.min(height[i]!, Math.round(sum / c) - 4 - extra));
+    }
   }
   const seaTouch = (idx: number) => {
     const y = (idx / cols) | 0;
@@ -1121,7 +1142,7 @@ function carveWater(
   let lakes = 0;
   const tryLake = (seed: number, limit: number) => {
     if (seen[seed] || !land[seed] || water[seed] === W_CHANNEL || seaTouch(seed)) return false;
-    if (drainage[seed]! > 0.42 || height[seed]! >= 168) return false;
+    if ((flow[seed] ?? 0) > 48 || height[seed]! >= 190) return false;
     const comp: number[] = [];
     const q = [seed];
     seen[seed] = 1;
@@ -1144,7 +1165,7 @@ function carveWater(
         q.push(k);
       }
     }
-    if (comp.length < 3) return false;
+    if (comp.length < 6) return false;
     let spill = 255;
     for (const c of comp) {
       const y = (c / cols) | 0;
@@ -1167,52 +1188,26 @@ function carveWater(
     }
     return true;
   };
-  for (let i = 0; i < n && lakes < 10; i++) {
-    if (tryLake(i, 36)) lakes += 1;
+  const pits: number[] = [];
+  for (let i = 0; i < n; i++) {
+    if (!land[i] || water[i] || seaTouch(i) || (flow[i] ?? 0) > 48 || height[i]! >= 190) continue;
+    let pit = true;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    for (const [dx, dy] of n4) {
+      const yy = y + dy;
+      if (yy < 0 || yy >= rows) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      if (land[yy * cols + xx] && height[yy * cols + xx]! < height[i]!) pit = false;
+    }
+    if (pit) pits.push(i);
   }
-  if (lakes === 0) {
-    let seed = -1;
-    for (let i = 0; i < n; i++) {
-      if (!land[i] || water[i] || seaTouch(i)) continue;
-      if (height[i]! >= 160) continue;
-      if (seed < 0 || drainage[i]! < drainage[seed]!) seed = i;
-    }
-    if (seed >= 0) {
-      const y = (seed / cols) | 0;
-      const x = seed - y * cols;
-      const comp = [seed];
-      for (const [dx, dy] of n4) {
-        const yy = y + dy;
-        if (yy < 0 || yy >= rows) continue;
-        let xx = x + dx;
-        if (wrap) xx = (xx + cols) % cols;
-        else if (xx < 0 || xx >= cols) continue;
-        const j = yy * cols + xx;
-        if (land[j] && !water[j] && !seaTouch(j)) comp.push(j);
-      }
-      let spill = 255;
-      const markSet = new Set(comp);
-      for (const c of comp) {
-        const cy = (c / cols) | 0;
-        const cx = c - cy * cols;
-        for (const [dx, dy] of n4) {
-          const yy = cy + dy;
-          if (yy < 0 || yy >= rows) continue;
-          let xx = cx + dx;
-          if (wrap) xx = (xx + cols) % cols;
-          else if (xx < 0 || xx >= cols) continue;
-          const k = yy * cols + xx;
-          if (markSet.has(k) || !land[k]) continue;
-          if (height[k]! < spill) spill = height[k]!;
-        }
-      }
-      if (spill !== 255) {
-        for (const c of comp) {
-          water[c] = W_LAKE;
-          height[c] = spill;
-        }
-      }
-    }
+  pits.sort((a, b) => height[a]! - height[b]!);
+  for (const i of pits) {
+    if (lakes >= 8) break;
+    if (tryLake(i, 140)) lakes += 1;
   }
   for (let pass = 0; pass < 4; pass++) {
     for (let i = 0; i < n; i++) {
@@ -1238,8 +1233,10 @@ function carveWater(
     const y = (i / cols) | 0;
     const x = i - y * cols;
     for (const j of ortho(x, y, cols, rows, wrap)) {
-      if (!land[j] || water[j] || height[j]! >= 156) continue;
-      if (height[j]! > height[i]! + 2) continue;
+      if (!land[j] || water[j]) continue;
+      if (height[j]! > height[i]! + 6) continue;
+      const wide = acc[i]! > threshold * 6;
+      if (!wide && height[j]! >= height[i]! + 18) continue;
       water[j] = W_FLOOD;
     }
   }
@@ -1619,7 +1616,7 @@ function erodeHeight(
   cols: number,
   rows: number,
   wrap: boolean,
-) {
+): Float32Array {
   const n = cols * rows;
   const mtn = mountains / 100;
   const h = new Float32Array(n);
@@ -1627,6 +1624,7 @@ function erodeHeight(
   const K = 0.16 + mtn * 0.45;
   const passes = 6;
   const rangeCut = 0.16 - mtn * 0.06;
+  let flow = new Float32Array(n);
   for (let p = 0; p < passes; p++) {
     const down = new Int32Array(n).fill(-1);
     const acc = new Float32Array(n);
@@ -1658,19 +1656,20 @@ function erodeHeight(
       const j = down[i]!;
       if (j >= 0 && land[j]) acc[j]! += acc[i]!;
     }
+    flow = acc;
     for (const i of order) {
       const j = down[i]!;
       if (j < 0) continue;
       const slope = Math.max(0, (h[i]! - h[j]!) / 255);
-      const cut = Math.min(4.2, K * Math.sqrt(Math.min(acc[i]!, 4000)) * slope);
+      const cut = Math.min(6.5, K * Math.sqrt(Math.min(acc[i]!, 4000)) * slope);
       const u = uplift[i]!;
       const y = (i / cols) | 0;
       const x = i - y * cols;
-      h[i] = Math.min(248, h[i]! + u * (0.55 + mtn * 0.9));
+      h[i] = Math.min(252, h[i]! + u * (0.55 + mtn * 0.9));
       h[i] = h[i]! - cut;
-      if (u > 0.72 && cellNoise(x, y, 2.4) > 0.72 && h[i]! < 228) h[i] = Math.min(236, h[i]! + 10);
-      if (h[i]! < 108) h[i] = 108;
-      if (h[i]! > 248) h[i] = 248;
+      if (u > 0.72 && cellNoise(x, y, 2.4) > 0.72 && h[i]! < 236) h[i] = Math.min(250, h[i]! + 14);
+      if (h[i]! < 100) h[i] = 100;
+      if (h[i]! > 252) h[i] = 252;
     }
   }
   for (let t = 0; t < 2; t++) {
@@ -1708,6 +1707,7 @@ function erodeHeight(
     if (!land[i]) continue;
     height[i] = byte(h[i]!);
   }
+  return flow;
 }
 
 function assignHeights(
@@ -1729,17 +1729,17 @@ function assignHeights(
   for (let i = 0; i < n; i++) {
     if (elev[i]! <= sea) {
       const depth = clamp01((sea - elev[i]!) / 0.22);
-      height[i] = byte(16 + (1 - depth) * 52);
+      height[i] = byte(8 + (1 - depth) * 62);
       continue;
     }
     land[i] = 1;
     landIdx.push(i);
     const t = clamp01((elev[i]! - sea) / maxAbove);
-    const rough = (crest[i]! - 0.5) * 8;
-    height[i] = byte(116 + t * 16 + rough);
+    const rough = (crest[i]! - 0.5) * 14;
+    height[i] = byte(118 + t * 78 + rough);
   }
   if (mtn < 0.05) {
-    for (const i of landIdx) if (height[i]! >= 150) height[i] = 136;
+    for (const i of landIdx) if (height[i]! >= 190) height[i] = 156;
   }
   return { height, land };
 }
@@ -1856,7 +1856,21 @@ export function applyWeather(field: TerrainField): void {
     }
     m = clamp01(m * wetK);
     field.moist[i] = byte(m * 255);
-    field.sky[i] = byte(40 + clamp01(0.18 + m * 0.7) * 175);
+    const season = (salt % 19) / 19;
+    const y = (i / cols) | 0;
+    const x = i - y * cols;
+    const wx = wrap ? (x + Math.floor(season * cols * 0.28)) % cols : x;
+    const belt = smoothNoise(wx / 16, y / 11, salt + 5);
+    const puff = smoothNoise(wx / 7, y / 6, salt + 13);
+    let sky = 28;
+    if (!wet && m < 0.32) sky = puff > 0.78 ? 58 : 22;
+    else if (m > 0.74 && belt > 0.8) sky = 214;
+    else if (m > 0.62 && puff > 0.52) sky = 176;
+    else if (m > 0.5 && belt > 0.42) sky = 138;
+    else if (m > 0.4) sky = puff > 0.5 ? 96 : 54;
+    else sky = puff > 0.62 ? 62 : 24;
+    if (cellNoise(x, y, salt + 1) > 0.997 && m > 0.45) sky = 228;
+    field.sky[i] = sky;
   }
 }
 function cellNoise(x: number, y: number, salt: number) {
@@ -1911,10 +1925,11 @@ function buildUnderSky(
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const i = y * cols + x;
-      const blob = cellNoise(x >> 3, y >> 3, 3.1) * 0.62 + cellNoise(x >> 1, y >> 2, 8.4) * 0.38;
-      const deep = !land[i] && seaD[i]! > 7;
-      const cut = deep ? 0.9 : 0.73;
-      if (blob > cut) under[i] = 1;
+      const blob = cellNoise(x >> 3, y >> 3, 3.1) * 0.55 + cellNoise(x >> 1, y >> 2, 8.4) * 0.45;
+      const inland = land[i] ? Math.min(1, (seaD[i] === 0 ? 0.2 : 0) + cellNoise(x >> 4, y >> 4, 19) * 0.3) : 0;
+      const cut = land[i] ? 0.78 - inland * 0.08 : 0.9;
+      if (blob > cut && (land[i] || seaD[i]! > 6)) under[i] = 1;
+      if (land[i] && blob > 0.992 && cellNoise(x, y, 41) > 0.7) under[i] = 3;
     }
   }
   const rooms: { x: number; y: number }[] = [];
@@ -1993,7 +2008,7 @@ function placeHearths(field: TerrainField) {
       const cover = field.cover[i] ?? 2;
       if (cover === 6 || cover === 0 || cover === 16) continue;
       let score = (field.moist[i] ?? 0) / 255;
-      if (cover === 2 || cover === 3 || cover === 7 || cover === 11) score += 1.2;
+      if (cover === 2 || cover === 3 || cover === 7 || cover === 11 || cover === 17 || cover === 18) score += 1.2;
       if ((field.relief[i] ?? 0) > R_HILL) score -= 0.4;
       scored.push({ j: i, score });
     }
@@ -2074,7 +2089,7 @@ function sealBasins(height: Uint8Array, land: Uint8Array, cols: number, rows: nu
         q.push(j);
       }
     }
-    if (touchesSea || comp.length < 28) return 0;
+    if (touchesSea || comp.length < 16) return 0;
     let rim = 255;
     const set = new Set(comp);
     for (const c of comp) {
@@ -2124,7 +2139,7 @@ function sealBasins(height: Uint8Array, land: Uint8Array, cols: number, rows: nu
   let kept = 0;
   for (const p of pits) {
     if (grow(p, 520)) kept += 1;
-    if (kept >= 3) break;
+    if (kept >= 6) break;
   }
   if (!kept) {
     let best = -1;
@@ -2177,7 +2192,7 @@ function sealBasins(height: Uint8Array, land: Uint8Array, cols: number, rows: nu
           }
         }
         if (rim !== 255) {
-          const floor = Math.min(rim - 1, Math.max(108, (height[best] ?? 120) - 4));
+          const floor = Math.min(rim - 1, Math.max(100, (height[best] ?? 140) - 4));
           if (floor < rim) {
             for (const j of bowl) {
               height[j] = floor;
@@ -2189,6 +2204,48 @@ function sealBasins(height: Uint8Array, land: Uint8Array, cols: number, rows: nu
     }
   }
   return mask;
+}
+
+function drownInlandSea(
+  height: Uint8Array,
+  land: Uint8Array,
+  cols: number,
+  rows: number,
+  wrap: boolean,
+  layout: WorldLayout,
+) {
+  if (layout !== "earthlike" && layout !== "continents") return;
+  const comp = largestComponent(land, cols, rows, wrap);
+  if (comp.length < 240) return;
+  const inside = new Set(comp);
+  const dist = floodDist((i) => land[i] !== 1, cols, rows, wrap, 36);
+  let best = -1;
+  let bestD = 10;
+  for (const i of comp) {
+    const d = dist[i] ?? 0;
+    if (d > bestD && height[i]! < 175) {
+      bestD = d;
+      best = i;
+    }
+  }
+  if (best < 0) return;
+  const y = (best / cols) | 0;
+  const x = best - y * cols;
+  const rad = 5;
+  for (let dy = -rad; dy <= rad; dy++) {
+    for (let dx = -rad - 2; dx <= rad + 2; dx++) {
+      if ((dx * dx) / 1.6 + dy * dy > rad * rad) continue;
+      const yy = y + dy;
+      if (yy < 1 || yy >= rows - 1) continue;
+      let xx = x + dx;
+      if (wrap) xx = (xx + cols) % cols;
+      else if (xx < 0 || xx >= cols) continue;
+      const j = yy * cols + xx;
+      if (!inside.has(j)) continue;
+      land[j] = 0;
+      height[j] = 32;
+    }
+  }
 }
 
 function finishWorld(
@@ -2215,14 +2272,16 @@ function finishWorld(
   noise: FieldNoise,
 ): TerrainField {
   const { height, land } = assignHeights(elev, crest, seaLevel, job.mountains, cols, rows, wrap);
+  drownInlandSea(height, land, cols, rows, wrap, job.layout);
   const built = buildPlates(cols, rows, wrap, job.seed, job.layout, land);
   const { uplift, rift } = classifyUplift(built.ids, built.plates, land, cols, rows, wrap);
   const mtn = job.mountains / 100;
+  let flow = new Float32Array(height.length);
   if (mtn > 0.04) {
-    const amp = 44 + mtn * 72;
+    const amp = 36 + mtn * 88;
     for (let i = 0; i < height.length; i++) {
       if (!land[i]) continue;
-      let h = (height[i] ?? 0) + uplift[i]! * amp - rift[i]! * 22;
+      let h = (height[i] ?? 0) + uplift[i]! * amp - rift[i]! * 28;
       const y = (i / cols) | 0;
       const x = i - y * cols;
       let coast = false;
@@ -2239,10 +2298,10 @@ function finishWorld(
         else if (xx < 0 || xx >= cols) continue;
         if (!land[yy * cols + xx]) coast = true;
       }
-      if (!coast && uplift[i]! < 0.12) h -= 8;
+      if (!coast && uplift[i]! < 0.12) h -= 6;
       height[i] = byte(h);
     }
-    erodeHeight(height, land, uplift, job.mountains, cols, rows, wrap);
+    flow = erodeHeight(height, land, uplift, job.mountains, cols, rows, wrap);
   }
   const basins = sealBasins(height, land, cols, rows, wrap);
   const n = cols * rows;
@@ -2306,7 +2365,7 @@ function finishWorld(
       height[i] = byte(84 - oceanDist[i]! * 4);
     }
   }
-  const water = carveWater(height, land, drainage, cols, rows, wrap);
+  const water = carveWater(height, land, flow, cols, rows, wrap);
   for (let i = 0; i < basins.length; i++) {
     if (!basins[i]) continue;
     water[i] = W_LAKE;
@@ -2483,13 +2542,28 @@ function finishWorld(
     }
     let rel = R_OCEAN;
     if (!isLand) rel = shelf[i] ? R_SHELF : R_OCEAN;
-    else if (cover[i] === 6 && (height[i]! >= 150 || tempF[i]! < 0.16)) rel = R_ICE;
-    else if (height[i]! >= 200 && slope >= 14) rel = R_PEAK;
-    else if (height[i]! >= 168 && slope >= 8) rel = R_RANGE;
-    else if (slope >= 6 || (height[i]! >= 158 && slope >= 4)) rel = R_HILL;
+    else if (cover[i] === 6 && (height[i]! >= 170 || tempF[i]! < 0.16)) rel = R_ICE;
+    else if (height[i]! >= 232 && slope >= 14) rel = R_PEAK;
+    else if (height[i]! >= 208 && slope >= 10) rel = R_RANGE;
+    else if (slope >= 10 || (height[i]! >= 210 && slope >= 6)) rel = R_HILL;
     else rel = R_LOW;
     relief[i] = rel;
-    if (water[i] === W_FLOOD && (cover[i] === 8 || cover[i] === 11) && moistF[i]! > 0.33) cover[i] = 2;
+    if ((water[i] === W_FLOOD || water[i] === W_COAST) && moistF[i]! > 0.45 && tempF[i]! > 0.28 && tempF[i]! < 0.66 && height[i]! < 168) {
+      const c = cover[i]!;
+      if (c === 2 || c === 17 || c === 18 || c === 11 || c === 12) cover[i] = drainage[i]! < 0.34 ? 21 : 7;
+    }
+    let lakeRim = false;
+    if (land[i] && water[i] !== W_LAKE && water[i] !== W_CHANNEL) {
+      const y = (i / cols) | 0;
+      const x = i - y * cols;
+      for (const j of ortho(x, y, cols, rows, wrap)) {
+        if (water[j] === W_LAKE) lakeRim = true;
+      }
+    }
+    if (lakeRim && moistF[i]! > 0.4 && height[i]! < 180) {
+      const c = cover[i]!;
+      if (c === 2 || c === 17 || c === 18 || c === 3 || c === 11) cover[i] = 7;
+    }
     if (water[i] === W_CHANNEL || water[i] === W_LAKE) {
       if (cover[i] === 9 || cover[i] === 10 || cover[i] === 0) cover[i] = 2;
     }
@@ -2681,6 +2755,13 @@ export function effects(stack: CellStack): CellEffects {
     conceal += 2;
     move += 1;
     tags.push("forest");
+  } else if (c === 18) {
+    conceal += 1;
+    move += 1;
+    tags.push("woodland");
+  } else if (c === 17) {
+    conceal += 1;
+    tags.push("light woodland");
   } else if (c === 13) {
     conceal += 2;
     move += 1;
@@ -2693,6 +2774,10 @@ export function effects(stack: CellStack): CellEffects {
     forage -= 1;
     tags.push("desert", "arid");
     if (stack.temp > 0.55) disease += 1;
+  } else if (c === 19) {
+    forage -= 0.5;
+    tags.push("scrub");
+    if (stack.moist < 0.4) tags.push("arid");
   } else if (c === 11) {
     forage -= 0.5;
     tags.push("steppe");
@@ -2702,15 +2787,31 @@ export function effects(stack: CellStack): CellEffects {
     move += 1;
     disease += 1;
     tags.push("marsh");
+  } else if (c === 21) {
+    move += 2;
+    disease += 1;
+    forage -= 0.5;
+    tags.push("bog");
+  } else if (c === 20) {
+    move += 1;
+    forage -= 0.5;
+    tags.push("alpine");
   } else if (c === 6) {
     move += 2;
     forage -= 1;
     if (!tags.includes("ice")) tags.push("ice");
-  } else if (c === 2) tags.push("grain");
+  } else if (c === 2) tags.push("plains");
   else if (c === 15) tags.push("tundra");
   else if (c === 0) tags.push("ocean");
   else if (c === 1) tags.push("shelf");
   else if (c === 16) tags.push("sea ice");
+  const openLake = stack.water === W_LAKE;
+  if (openLake) {
+    conceal = 0;
+    forage = Math.min(forage, 0.5);
+    const drop = new Set(["forest", "woodland", "light woodland", "jungle", "taiga", "plains"]);
+    for (let k = tags.length - 1; k >= 0; k--) if (drop.has(tags[k]!)) tags.splice(k, 1);
+  }
   if (stack.water === W_CHANNEL || stack.water === W_FLOOD) {
     move += 1;
     supply += 1;
@@ -2865,22 +2966,25 @@ export function climateName(temp: number, moist: number): string {
 }
 
 export function heightBand(h: number): string {
-  if (h < 78) return "deep";
-  if (h < 118) return "low";
-  if (h < 158) return "rising";
-  if (h < 198) return "high";
+  if (h < 72) return "deep";
+  if (h < 104) return "low";
+  if (h < 156) return "rising";
+  if (h < 205) return "high";
   return "peak";
 }
 
 export function skyKind(sky: number): string {
-  if (sky < 70) return "clear air";
-  if (sky < 110) return "haze";
-  if (sky < 170) return "cloud";
-  return "overcast";
+  if (sky >= 210) return "storm";
+  if (sky >= 165) return "rain";
+  if (sky >= 120) return "overcast";
+  if (sky >= 80) return "cloud";
+  if (sky >= 48) return "haze";
+  return "clear air";
 }
 
 export function underKind(under: number, column?: "up" | "down" | null): string {
   if (column === "up" || column === "down") return "column";
+  if (under === 3) return "void";
   if (under === 1) return "chamber";
   if (under === 2) return "tunnel";
   return "rock";
@@ -2891,9 +2995,10 @@ export function cellBrief(field: TerrainField, x: number, y: number, mapW: numbe
   const stack = cellStack(field, i);
   const fx = effects(stack);
   const reliefName = RELIEF_LABEL[stack.relief] ?? "Lowland";
-  const coverName = TERRAINS[stack.cover]?.label ?? "Ground";
   const claim = field.owner[i] ? (field.ownerIds[field.owner[i]! - 1] ?? "") : "";
   const sea = stack.cover === 0 || stack.cover === 1 || stack.cover === 16;
+  const openWater = stack.water === W_CHANNEL || stack.water === W_LAKE;
+  const waterName = stack.water === W_LAKE ? "Lake" : "River";
   const col = field.columns?.find((c) => c.y * field.cols + c.x === i);
   if (plane === "sky") {
     const kind = skyKind(field.sky[i] ?? 80);
@@ -2923,13 +3028,15 @@ export function cellBrief(field: TerrainField, x: number, y: number, mapW: numbe
       effects: fx,
     };
   }
+  const coverName = openWater ? waterName : (TERRAINS[stack.cover]?.label ?? "Ground");
+  const shown = openWater ? [waterName.toLowerCase()] : fx.tags;
   return {
-    biome: fx.tags.length ? fx.tags.join(" + ") : coverName,
-    tags: fx.tags,
-    relief: sea ? "" : reliefName,
+    biome: shown.length ? shown.join(" + ") : coverName,
+    tags: shown,
+    relief: sea || openWater || stack.relief === R_LOW ? "" : reliefName,
     cover: coverName,
     water: stack.water,
-    climate: climateName(field.temp[i] ?? 128, field.moist[i] ?? 128),
+    climate: openWater ? "" : climateName(field.temp[i] ?? 128, field.moist[i] ?? 128),
     band: heightBand(stack.height),
     claim,
     effects: fx,
@@ -2975,15 +3082,24 @@ export function stampTerrain(
       const i = r * field.cols + c;
       const prev = field.relief[i] ?? R_LOW;
       field.terrain[i] = def.id;
-      field.height[i] = def.height;
       field.relief[i] = reliefForCover(def.id, prev);
       if (!field.cover || field.cover.length !== field.terrain.length) field.cover = new Uint8Array(field.terrain);
       if (!field.water || field.water.length !== field.terrain.length) field.water = new Uint8Array(field.terrain.length);
-      if (def.id === 9) field.water[i] = 1;
-      else if (def.id === 10) field.water[i] = 3;
-      else if (def.id === 0 || def.id === 1 || def.id === 16) field.water[i] = 0;
-      if (def.id !== 9 && def.id !== 10) field.cover[i] = def.id;
-      else if (field.cover[i] === 0 || field.cover[i] === 9 || field.cover[i] === 10) field.cover[i] = 2;
+      if (def.id === 9) {
+        field.water[i] = 1;
+        if (field.cover[i] === 0 || field.cover[i] === 9 || field.cover[i] === 10) field.cover[i] = 2;
+      } else if (def.id === 10) {
+        field.water[i] = 3;
+        if (field.cover[i] === 0 || field.cover[i] === 9 || field.cover[i] === 10) field.cover[i] = 2;
+      } else if (def.id === 0 || def.id === 1 || def.id === 16) {
+        field.water[i] = 0;
+        field.cover[i] = def.id;
+        field.height[i] = def.height;
+      } else {
+        field.cover[i] = def.id;
+        if (field.water[i] !== 1 && field.water[i] !== 2 && field.water[i] !== 3) field.height[i] = def.height;
+      }
+      field.terrain[i] = previewOf(field.cover[i] ?? def.id, field.water[i] ?? 0);
     }
   }
 }
@@ -3162,7 +3278,7 @@ function ecotoneOf(a: number, b: number): readonly [number, number, number] | nu
   const pair = (x: number, y: number) => (a === x && b === y) || (a === y && b === x);
   if (pair(2, 8) || pair(11, 8) || pair(2, 12)) return RGB[12] ?? null;
   if (pair(3, 5) || pair(3, 4) || pair(13, 5)) return [78, 118, 64];
-  if (pair(2, 3) || pair(11, 3)) return [112, 148, 62];
+  if (pair(2, 3) || pair(11, 3) || pair(2, 17) || pair(17, 18) || pair(18, 3)) return [112, 148, 62];
   return null;
 }
 
@@ -3303,7 +3419,7 @@ export function renderTerrain(
           r += speck * 4;
           g += speck * 3;
           b += speck;
-        } else if (id === 3 || id === 13 || id === 14) {
+        } else if (id === 3 || id === 13 || id === 14 || id === 17 || id === 18) {
           const spec = (x * 17 + y * 11) & 7;
           const d = spec < 2 ? -14 : spec > 5 ? 9 : 0;
           r += d * 0.45;
@@ -3427,7 +3543,7 @@ export function renderTerrain(
         r = cr;
         g = cg;
         b = cb;
-        shade = Math.max(0.78, Math.min(1.18, 0.96 + light / 90));
+        shade = 1;
       }
       if (dim) {
         r = Math.round(r * 0.55 + 200 * 0.45);

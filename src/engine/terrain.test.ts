@@ -912,4 +912,40 @@ test("a lake is the depression that made it, not a stamped size", () => {
   }
 });
 
+test("plains is the open cover and a lake center is only water", () => {
+  const plains = TERRAINS.find((t) => t.key === "plains");
+  assert.equal(plains?.label, "Plains");
+  assert.ok(TERRAINS.some((t) => t.key === "lightwood"));
+  assert.ok(TERRAINS.some((t) => t.key === "woodland"));
+  assert.ok(TERRAINS.some((t) => t.key === "scrub"));
+  assert.ok(TERRAINS.some((t) => t.key === "alpine"));
+  const world = generateTerrain("inkunzi", 46);
+  let wood = 0;
+  let closed = 0;
+  let low = 0;
+  let high = 0;
+  let land = 0;
+  for (let i = 0; i < world.cover.length; i++) {
+    const id = world.cover[i]!;
+    if (id === 0 || id === 1 || id === 16) continue;
+    land += 1;
+    if (id === 17 || id === 18) wood += 1;
+    if (id === 3) closed += 1;
+    const h = world.height[i]!;
+    if (world.relief[i]! <= 2) {
+      if (h < 108) low += 1;
+      if (h > 160) high += 1;
+    }
+    if (world.water[i] === 3) {
+      const tags = effects(cellStack(world, i)).tags;
+      assert.equal(tags.includes("forest"), false);
+      assert.equal(tags.includes("light woodland"), false);
+      assert.ok(tags.includes("lake"));
+    }
+  }
+  assert.ok(wood > 20, `woodland ${wood}`);
+  assert.ok(closed > 10, `forest ${closed}`);
+  assert.ok(low + high > land * 0.04, `height still crushed low ${low} high ${high} land ${land}`);
+});
+
 

@@ -15,7 +15,7 @@ import {
 } from "./terrain";
 import { loadSession } from "./sessionStore";
 
-const KEY = "inkunzi.terrain.v26";
+const KEY = "inkunzi.terrain.v27";
 
 let current: TerrainField | null = null;
 let previewUrl = "";
@@ -69,6 +69,7 @@ function freshWorld(): TerrainField {
   if (typeof window !== "undefined") {
     try {
       const raw =
+        window.localStorage.getItem("inkunzi.terrain.v26") ||
         window.localStorage.getItem("inkunzi.terrain.v25") ||
         window.localStorage.getItem("inkunzi.terrain.v24") ||
         window.localStorage.getItem("inkunzi.terrain.v23") ||
